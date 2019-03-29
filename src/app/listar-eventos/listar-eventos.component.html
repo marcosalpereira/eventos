@@ -1,0 +1,19 @@
+<mat-expansion-panel [hideToggle]="true" [expanded]="true">
+
+  <mat-expansion-panel-header>
+    <mat-card-title>Eventos Ativos</mat-card-title>
+  </mat-expansion-panel-header>
+  <div class="eventos">
+
+    <mat-card class="eventos-item" *ngFor="let evento of eventos">
+      <mat-card-title>{{evento.nome}}</mat-card-title>
+      <mat-card-content>{{evento.descricao}}</mat-card-content>
+      <mat-card-actions>
+        <button [routerLink]="['/participar-evento', evento.id]" mat-icon-button title="Participar" color="primary">
+          <mat-icon>person_add</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+  </div>
+</mat-expansion-panel>

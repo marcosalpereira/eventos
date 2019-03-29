@@ -1,0 +1,12 @@
+.recursos {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 20px;
+}
+
+.recursos-item {
+	/* display: inline-block; */
+	margin: 10px;
+	vertical-align: top;
+	width: 260px;
+}
