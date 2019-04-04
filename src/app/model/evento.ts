@@ -3,5 +3,5 @@ import { Recurso } from './recurso';
 
 export interface Evento extends BaseModel, Named {
     descricao: string;
-    recurso?: Recurso[];
+    recursos?: Recurso[];
 }

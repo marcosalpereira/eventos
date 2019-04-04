@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Evento } from '../model/evento';
 import { RecursoParticipante } from '../model/recurso-participante';
 import { Recurso } from '../model/recurso';
+import { DadosService } from '../shared/services/dados.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-partcipar-evento',
@@ -11,25 +13,28 @@ import { Recurso } from '../model/recurso';
 export class PartciparEventoComponent implements OnInit {
 
   evento: Evento;
-  recursosParticipante: RecursoParticipante[];
+  recursosParticipante: RecursoParticipante[] ;
 
-  constructor() { }
+  constructor(
+    private dadosService: DadosService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
-    const leite: Recurso = { nome: 'Leite', quantidade: 10, unidade: 'litro' };
-    this.evento = {
-      id: 1,
-      nome: 'Evento 1',
-      descricao: 'Evento para bla bla bla',
-      recurso: [
-        leite,
-        {nome: 'Água',  quantidade: 20, unidade: 'litro'},
-      ]
-     };
+    const id = +this.route.snapshot.paramMap.get('id');
+    this.dadosService.findEvento(id).subscribe(
+      evento => this.evento = evento
+    );
 
-    this.recursosParticipante = [
-      { recurso: leite }
-    ];
+    this.recursosParticipante = [];
+
+  }
+
+  onChangeContibuir(recurso: Recurso, e) {
+    console.log(e, recurso);
+    if (e.checked) {
+      this.recursosParticipante.push({recurso});
+    }
   }
 
 }

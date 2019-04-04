@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Evento } from '../model/evento';
+import { DadosService } from '../shared/services/dados.service';
 
 @Component({
   selector: 'app-listar-eventos',
@@ -9,14 +10,12 @@ import { Evento } from '../model/evento';
 export class ListarEventosComponent implements OnInit {
   eventos: Evento[];
 
-  constructor() { }
+  constructor(private dadosService: DadosService) { }
 
   ngOnInit() {
-    this.eventos = [
-      { id: 1, nome: 'Evento 1', descricao: 'Evento para bla bla bla' },
-      { id: 2, nome: 'Evento 2', descricao: 'Evento para bla bla bla' },
-      { id: 3, nome: 'Evento 3', descricao: 'Evento para bla bla bla' }
-    ]
+    this.dadosService.findEventosAtivos().subscribe(
+      eventos => this.eventos = eventos
+    );
   }
 
 }
