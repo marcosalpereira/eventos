@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { MaterialModule } from './material.module';
 import { PlanejarEventoComponent } from './planejar-evento/planejar-evento.component';
 import { ListarEventosComponent } from './listar-eventos/listar-eventos.component';
-import { PartciparEventoComponent } from './partcipar-evento/partcipar-evento.component';
+import { PartciparEventoComponent } from './participar-evento/participar-evento.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({

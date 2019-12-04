@@ -1,6 +1,6 @@
 import { Recurso } from './recurso';
 
-export interface RecursoParticipante {
+export interface RecursoParticipacao {
     recurso: Recurso;
     quantidade?: number;
 }

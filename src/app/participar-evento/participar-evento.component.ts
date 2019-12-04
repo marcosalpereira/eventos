@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Evento } from '../model/evento';
-import { RecursoParticipante } from '../model/recurso-participante';
+import { RecursoParticipacao } from '../model/recurso-participacao';
 import { Recurso } from '../model/recurso';
 import { DadosService } from '../shared/services/dados.service';
 import { ActivatedRoute } from '@angular/router';
+import { Participacao } from '../model/participacao';
 
 @Component({
-  selector: 'app-partcipar-evento',
-  templateUrl: './partcipar-evento.component.html',
-  styleUrls: ['./partcipar-evento.component.css']
+  selector: 'app-participar-evento',
+  templateUrl: './participar-evento.component.html',
+  styleUrls: ['./participar-evento.component.css']
 })
 export class PartciparEventoComponent implements OnInit {
 
   evento: Evento;
-  recursosParticipante: RecursoParticipante[] ;
+  participarei = false;
+  participacao: Participacao;
 
   constructor(
     private dadosService: DadosService,
@@ -26,14 +28,24 @@ export class PartciparEventoComponent implements OnInit {
       evento => this.evento = evento
     );
 
-    this.recursosParticipante = [];
 
   }
 
-  onChangeContibuir(recurso: Recurso, e) {
+  onChangeParticipacao() {
+    if (this.participarei) {
+      this.participacao = {
+        evento: this.evento,
+        recursos: []
+      }
+    } else {
+      this.participacao = null;
+    }
+  }
+
+  onChangeContribuir(recurso: Recurso, e) {
     console.log(e, recurso);
     if (e.checked) {
-      this.recursosParticipante.push({recurso});
+      this.participacao.recursos.push({recurso});
     }
   }
 
