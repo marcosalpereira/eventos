@@ -9,3 +9,7 @@ export interface Resource {
     amount: number;
     unit: string;
 }
+
+export interface ResourceGroupResources extends ResourceGroup {
+    resources: Resource[];
+}
