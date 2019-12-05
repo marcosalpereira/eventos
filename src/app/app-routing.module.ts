@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ListarEventosComponent } from './listar-eventos/listar-eventos.component';
-import { PartciparEventoComponent } from './participar-evento/participar-evento.component';
+import { EventsListComponent } from './events-list/events-list.component';
+import { EventParticipationComponent } from './event-participation/event-participation.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'eventos', pathMatch: 'full' },
-  { path: 'eventos', component: ListarEventosComponent},
-  { path: 'participar-evento/:id', component: PartciparEventoComponent}
+  { path: 'events', component: EventsListComponent},
+  { path: 'event-participation/:id', component: EventParticipationComponent}
 ];
 
 @NgModule({
