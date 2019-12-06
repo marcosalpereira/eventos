@@ -1,3 +1,5 @@
+import { Participation } from './participation';
+
 export interface ResourceGroup {
     id: string;
     name: string;
@@ -10,6 +12,6 @@ export interface Resource {
     unit: string;
 }
 
-export interface ResourceGroupResources extends ResourceGroup {
-    resources: Resource[];
+export interface ResourceGroupParticipations extends ResourceGroup {
+    participations: Participation[];
 }

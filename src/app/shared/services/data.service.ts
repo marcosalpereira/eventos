@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { Event } from 'src/app/model/event';
-import { Resource, ResourceGroup, ResourceGroupResources } from 'src/app/model/resource';
+import { Resource, ResourceGroup, ResourceGroupParticipations } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 
@@ -19,12 +19,12 @@ const GRUPO_COMIDAS: ResourceGroup = { id: IdUtil.id(), name: 'Comidas' };
 
 const EVENTS: Event[] = [
   {
-    id: IdUtil.id(),
+    id: '1',
     name: 'Natal 2018',
     description: 'Natal 2018'
   },
   {
-    id: IdUtil.id(),
+    id: '2',
     name: 'Natal 2019',
     description: 'Natal 2019'
   }
@@ -70,8 +70,17 @@ export class DataService {
 
 
 
-  findResourcesGroups(eventId: string): Observable<ResourceGroupResources[]> {
-    return of([GRUPO_COMIDAS, GRUPO_BEBIDAS]);
+  findResourcesGroups(eventId: string): Observable<ResourceGroupParticipations[]> {
+    return of([
+      {
+        ...GRUPO_BEBIDAS,
+        resources: BEBIDAS
+      },
+      {
+        ...GRUPO_COMIDAS,
+        resources: COMIDAS
+      }
+    ]);
   }
 
   findResources(groupId: string): Observable<Resource[]> {
@@ -87,6 +96,7 @@ export class DataService {
   }
 
   deleteParticipation(resourceId: string, personId: string) {
+    personId.m
     this.participations = this.participations.filter(p => p.resourceId !== resourceId);
     this.participationsSubject.next(this.participations);
   }

@@ -1,12 +1,17 @@
-.recursos {
-	display: flex;
-	flex-wrap: wrap;
-	padding: 20px;
+.resource-group {
+    margin-bottom: 10px;
 }
 
-.recursos-item {
-	/* display: inline-block; */
-	margin: 10px;
-	vertical-align: top;
-	width: 260px;
+.resources {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.resource {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.participation {
+    display: block;
 }

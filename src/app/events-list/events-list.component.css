@@ -1,12 +1,15 @@
-.eventos {
+.events {
 	display: flex;
 	flex-wrap: wrap;
-	padding: 20px;
 }
 
-.eventos-item {
-	/* display: inline-block; */
+.events-item {
 	margin: 10px;
 	vertical-align: top;
 	width: 260px;
+}
+
+.two-items * {
+	line-height: 1rem;
+	height: 1rem;
 }

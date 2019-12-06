@@ -1,45 +1,50 @@
 <mat-expansion-panel [hideToggle]="true" [expanded]="true">
 
-  <mat-expansion-panel-header>
-    <mat-card-title>Evento {{evento.nome}}</mat-card-title>
-  </mat-expansion-panel-header>
+  <mat-card-title>
+    <div class="two-items">
+      <span>Evento {{event.name}}</span>
+      <mat-checkbox [(ngModel)]="participarei">Irei participar</mat-checkbox>
+    </div>
+  </mat-card-title>
 
-  <mat-checkbox [(ngModel)]="participarei">Irei participar</mat-checkbox>
-
-  <p>Recursos necessários</p>
-  <div class="recursos">
-    <mat-card class="recursos-item" *ngFor="let recurso of evento.recursos">
-      <mat-card-title>{{recurso.nome}}</mat-card-title>
-      <mat-card-content>?? de {{recurso.quantidade}} {{recurso.unidade}}</mat-card-content>
-      <mat-card-actions *ngIf="participarei">
-        <mat-checkbox (change)="onChangeContribuir(recurso, $event)">Contribuir</mat-checkbox>
-      </mat-card-actions>
+  <div class="resources-groups">
+    <mat-card class="resource-group" *ngFor="let group of resourcesGroups">
+      <mat-card-title>{{group.name}}</mat-card-title>
+      <mat-card-content>
+        <div class="resources">
+          <mat-card class="resource" *ngFor="let resource of group.resources">
+            <mat-card-content>
+              <span>{{resource.name}} Meta: {{resource.amount}} {{resource.unit}}</span>
+              <mat-form-field class="participation" *ngIf="participarei">
+                <input  matInput>
+                <mat-hint>Quantidade que contribuirei</mat-hint>
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
     </mat-card>
-
   </div>
+  <mat-action-row>
+    <button mat-raised-button color="primary">Gravar</button>
+  </mat-action-row>
 
-  <form *ngIf="participarei" #form="ngForm">
+
+  <!-- <form *ngIf="participarei" #form="ngForm">
     <p>Recursos que eu vou contribuir</p>
     <div class="recursos">
-      <div class="warn-text" *ngIf="participacao.recursos.length == 0">Por enquanto não estou contribuindo</div>
-      <mat-form-field *ngFor="let recursoParticipante of participacao.recursos"
-          [hintLabel]="recursoParticipante.recurso.nome" >
-        <input matInput placeholder="Quantidade">
-        <!-- <mat-error *ngIf="nome.hasError('required')">Obrigatório</mat-error> -->
+      <div class="warn-text" *ngIf="participations?.length == 0">Por enquanto não estou contribuindo
+      </div>
+      <mat-form-field *ngFor="let participation of participations" [hintLabel]="participation._resourceName">
+        <input #amount matInput placeholder="Quantidade" required>
+        <mat-error *ngIf="amount.hasError('required')">Obrigatório</mat-error>
       </mat-form-field>
-
-      <!-- <mat-card class="recursos-item" *ngFor="let recursoParticipante of participacao.recursos"> -->
-        <!-- <mat-card-title>{{recursoParticipante.recurso.nome}}</mat-card-title>
-              <mat-card-content>
-                <input type="number">
-              </mat-card-content> -->
-        <!-- </mat-card> -->
     </div>
 
     <mat-action-row>
       <button type="submit" [disabled]="form.invalid" mat-raised-button color="primary">Gravar</button>
     </mat-action-row>
-  </form>
+  </form> -->
 
 
 </mat-expansion-panel>
