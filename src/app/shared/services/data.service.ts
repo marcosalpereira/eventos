@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { Event } from 'src/app/model/event';
-import { Resource, ResourceGroup, ResourceGroupParticipations } from 'src/app/model/resource';
+import { Resource, ResourceGroup, ResourceGroupVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 
-const CERVEJA: Resource = { id: IdUtil.id(), name: 'Cerveja', amount: 10, unit: '600ml' };
-const COCA_COLA: Resource = { id: IdUtil.id(), name: 'Coca-Cola', amount: 4, unit: 'litro' };
+const CERVEJA: Resource = { id: IdUtil.id(), name: 'Cerveja', meta: 10, unit: '600ml' };
+const COCA_COLA: Resource = { id: IdUtil.id(), name: 'Coca-Cola', meta: 4, unit: 'litro' };
 
 const BEBIDAS: Resource[] = [CERVEJA, COCA_COLA];
 
-const ARROZ: Resource = { id: IdUtil.id(), name: 'Arroz', amount: 1, unit: 'Un' };
-const BATATA_PALHA: Resource = { id: IdUtil.id(), name: 'Batata palha', amount: 2, unit: 'Kg' };
+const ARROZ: Resource = { id: IdUtil.id(), name: 'Arroz', meta: 1, unit: 'Un' };
+const BATATA_PALHA: Resource = { id: IdUtil.id(), name: 'Batata palha', meta: 2, unit: 'Kg' };
 const COMIDAS: Resource[] = [ARROZ, BATATA_PALHA];
 
 const GRUPO_BEBIDAS: ResourceGroup = { id: IdUtil.id(), name: 'Bebidas' };
@@ -70,15 +70,15 @@ export class DataService {
 
 
 
-  findResourcesGroups(eventId: string): Observable<ResourceGroupParticipations[]> {
+  findResourcesGroups(eventId: string): Observable<ResourceGroupVO[]> {
     return of([
       {
         ...GRUPO_BEBIDAS,
-        resources: BEBIDAS
+        participations: BEBIDAS.map( r => ({...r}))
       },
       {
         ...GRUPO_COMIDAS,
-        resources: COMIDAS
+        participations: COMIDAS.map( r => ({...r}))
       }
     ]);
   }
@@ -96,7 +96,6 @@ export class DataService {
   }
 
   deleteParticipation(resourceId: string, personId: string) {
-    personId.m
     this.participations = this.participations.filter(p => p.resourceId !== resourceId);
     this.participationsSubject.next(this.participations);
   }

@@ -1,7 +1,8 @@
-.resource-group {
+mat-expansion-panel {
     margin-bottom: 10px;
 }
 
+.participations,
 .resources {
 	display: flex;
 	flex-wrap: wrap;

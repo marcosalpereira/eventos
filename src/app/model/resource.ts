@@ -8,10 +8,14 @@ export interface ResourceGroup {
 export interface Resource {
     id: string;
     name: string;
-    amount: number;
+    meta: number;
     unit: string;
 }
 
-export interface ResourceGroupParticipations extends ResourceGroup {
-    participations: Participation[];
+export interface ParticipationVO extends Resource {
+    amount?: number;
+}
+
+export interface ResourceGroupVO extends ResourceGroup {
+    participations: ParticipationVO[];
 }

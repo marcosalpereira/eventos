@@ -4,7 +4,7 @@ import { Event } from '../model/event';
 import {
   Resource,
   ResourceGroup,
-  ResourceGroupParticipations
+  ResourceGroupVO
 } from '../model/resource';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -18,9 +18,9 @@ import { Person } from '../model/person';
 export class EventParticipationComponent implements OnInit {
   event: Event;
   participarei = false;
-  participations: Participation[];
   person: Person;
-  resourcesGroups: ResourceGroupParticipations[];
+  resourcesGroups: ResourceGroupVO[];
+  participations: Participation[] = [];
 
   constructor(
     private dataService: DataService,
@@ -30,6 +30,9 @@ export class EventParticipationComponent implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
+    setTimeout(() => {
+      this.participations = [... this.participations, {amount: 1, _resourceName: 'foo', _personName: 'bar', personId: '1', resourceId: '2'}];
+    }, 500);
   }
 
   private receiveEvent(event) {
@@ -41,8 +44,9 @@ export class EventParticipationComponent implements OnInit {
       );
   }
 
-  private receiveResourcesGroups(event, resourcesGroups: ResourceGroupParticipations[]): void {
+  private receiveResourcesGroups(event, resourcesGroups: ResourceGroupVO[]): void {
     this.resourcesGroups = resourcesGroups;
+    console.log(resourcesGroups)
     this.dataService
       .findParticipations(event.id)
       .subscribe(participations => this.receiveParticipations(participations));
