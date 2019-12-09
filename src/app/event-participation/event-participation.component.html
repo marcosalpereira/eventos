@@ -10,8 +10,17 @@
   <mat-expansion-panel>
     <mat-expansion-panel-header><mat-card-title>Todas Participações</mat-card-title></mat-expansion-panel-header>
     <div class="participations">
-      <mat-card *ngFor="let participation of participations">
-        {{participation._personName}} {{participation._resourceName}} {{participation.amount}}
+      <mat-card *ngFor="let participation of participations" class="inline-card">
+        {{participation._personName}} {{participation._resourceName}}: {{participation.amount}}
+      </mat-card>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header><mat-card-title>Todas Participações Agrupadas</mat-card-title></mat-expansion-panel-header>
+    <div class="participations">
+      <mat-card *ngFor="let arrecadation of arrecadations" class="inline-card">
+        {{arrecadation.name}}: {{arrecadation.total}}
       </mat-card>
     </div>
   </mat-expansion-panel>
@@ -21,7 +30,7 @@
       <mat-card-title>{{group.name}}</mat-card-title>
     </mat-expansion-panel-header>
     <div class="resources">
-      <mat-card class="resource" *ngFor="let resource of group.participations">
+      <mat-card class="inline-card" *ngFor="let resource of group.participations">
         <mat-card-content>
           <span>{{resource.name}} Meta: {{resource.meta}} {{resource.unit}}</span>
           <mat-form-field class="participation" *ngIf="participarei">

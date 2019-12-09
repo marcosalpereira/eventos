@@ -8,8 +8,9 @@ mat-expansion-panel {
 	flex-wrap: wrap;
 }
 
-.resource {
-    margin-right: 10px;
+.inline-card {
+    padding: 5px;
+    margin-right: 5px;
     margin-bottom: 10px;
 }
 

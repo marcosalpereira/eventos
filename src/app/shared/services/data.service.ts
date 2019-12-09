@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { Event } from 'src/app/model/event';
-import { Resource, ResourceGroup, ResourceGroupVO } from 'src/app/model/resource';
+import { Resource, ResourceGroup, ResourceGroupVO, Arrecadation } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 
@@ -34,9 +34,9 @@ const EVENTS: Event[] = [
   providedIn: 'root'
 })
 export class DataService {
-  private participations: Participation[] = [];
-  private participationsSubject = new Subject<Participation[]>();
-  private participations$ = this.participationsSubject.asObservable();
+  private tmpParticipations: Participation[] = [];
+  private eventParticipationsSubject = new Subject<Participation[]>();
+  private eventParticipations$ = this.eventParticipationsSubject.asObservable();
 
   constructor() { }
 
@@ -90,20 +90,53 @@ export class DataService {
     return of(COMIDAS);
   }
 
-  findParticipations(eventId: string): Observable<Participation[]> {
-    setTimeout( () => this.participationsSubject.next(this.participations), 0);
-    return this.participations$;
-  }
-
   deleteParticipation(resourceId: string, personId: string) {
-    this.participations = this.participations.filter(p => p.resourceId !== resourceId);
-    this.participationsSubject.next(this.participations);
+    this.tmpParticipations = this.tmpParticipations.filter(p =>
+      ! (p.resourceId === resourceId && p.personId === personId) );
+    this.eventParticipationsSubject.next(this.tmpParticipations);
   }
 
   updateParticipation(participation: Participation) {
-    const founded = this.participations.find(p => p.resourceId = participation.resourceId);
+    const founded = this.tmpParticipations.find(p =>
+      (p.resourceId === participation.resourceId && p.personId === participation.personId));
     founded.amount = participation.amount;
-    this.participationsSubject.next(this.participations);
+    this.eventParticipationsSubject.next(this.tmpParticipations);
   }
 
+  selectParticipations(eventId: string): Observable<Participation[]> {
+    setInterval(() => {
+      const r = shuffle([...BEBIDAS, ...COMIDAS])[0];
+      this.tmpParticipations = [... this.tmpParticipations,
+        {amount: getRandom(1, 3), _resourceName: r.name, _personName: 'Fulano', personId: '1', resourceId: r.id}];
+      this.eventParticipationsSubject.next(this.tmpParticipations);
+    }, 2000);
+    return this.eventParticipations$;
+  }
+
+}
+
+
+function getRandom(min, max) {
+  return Math.trunc(Math.random() * (max - min) + min);
+}
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue: number;
+  let randomIndex: number;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }

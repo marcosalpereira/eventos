@@ -12,6 +12,10 @@ export interface Resource {
     unit: string;
 }
 
+export interface Arrecadation {
+    name: string;
+    total: number;
+}
 export interface ParticipationVO extends Resource {
     amount?: number;
 }

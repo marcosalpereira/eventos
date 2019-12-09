@@ -4,7 +4,8 @@ import { Event } from '../model/event';
 import {
   Resource,
   ResourceGroup,
-  ResourceGroupVO
+  ResourceGroupVO,
+  Arrecadation
 } from '../model/resource';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -18,9 +19,11 @@ import { Person } from '../model/person';
 export class EventParticipationComponent implements OnInit {
   event: Event;
   participarei = false;
-  person: Person;
+  person: Partial<Person>;
   resourcesGroups: ResourceGroupVO[];
+  eventParticipations: Participation[] = [];
   participations: Participation[] = [];
+  arrecadations: Arrecadation[] = [];
 
   constructor(
     private dataService: DataService,
@@ -28,11 +31,12 @@ export class EventParticipationComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.person = {id: '1'};
     const id = this.route.snapshot.paramMap.get('id');
     this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
-    setTimeout(() => {
-      this.participations = [... this.participations, {amount: 1, _resourceName: 'foo', _personName: 'bar', personId: '1', resourceId: '2'}];
-    }, 500);
+    this.dataService.selectParticipations(id).subscribe(
+      participations => this.receiveEventParticipations(participations)
+    );
   }
 
   private receiveEvent(event) {
@@ -46,15 +50,28 @@ export class EventParticipationComponent implements OnInit {
 
   private receiveResourcesGroups(event, resourcesGroups: ResourceGroupVO[]): void {
     this.resourcesGroups = resourcesGroups;
-    console.log(resourcesGroups)
-    this.dataService
-      .findParticipations(event.id)
-      .subscribe(participations => this.receiveParticipations(participations));
   }
 
-  private receiveParticipations(participations) {
-    this.participations = participations;
+  private receiveEventParticipations(eventParticipations: Participation[]) {
+    this.eventParticipations = eventParticipations;
+    this.participations = this.eventParticipations.filter(p => p.personId = this.person.id);
+    this.arrecadations = this.groupArrecadations(eventParticipations);
     this.participarei = this.participations && this.participations.length > 0;
+  }
+
+  private groupArrecadations(eventParticipations: Participation[]): Arrecadation[] {
+    const key = '_resourceName';
+    const tmpMap = eventParticipations.reduce( (map, participation) => {
+      map[participation[key]] = (map[participation[key]] || 0) + participation.amount;
+      return map;
+    }, new Map());
+
+    const ret: Arrecadation[] = [];
+    for (const [name, total] of Object.entries(tmpMap)) {
+      ret.push( {name, total} );
+    }
+
+    return ret;
   }
 
   // onChangeContribuir(resource: Resource, ev) {
