@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject, forkJoin } from 'rxjs';
 import { Event } from 'src/app/model/event';
-import { Resource, ResourceGroup, ResourceGroupVO, Arrecadation } from 'src/app/model/resource';
+import { Resource, ResourceGroup, ParticipationsGrouped, Arrecadation, ResourcesGroupedVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { mergeMap, map } from 'rxjs/operators';
 
 const CERVEJA: Resource = { id: IdUtil.id(), name: 'Cerveja', meta: 10, unit: '600ml' };
 const COCA_COLA: Resource = { id: IdUtil.id(), name: 'Coca-Cola', meta: 4, unit: 'litro' };
@@ -34,18 +36,20 @@ const EVENTS: Event[] = [
   providedIn: 'root'
 })
 export class DataService {
+
   private tmpParticipations: Participation[] = [];
   private eventParticipationsSubject = new Subject<Participation[]>();
   private eventParticipations$ = this.eventParticipationsSubject.asObservable();
 
-  constructor() { }
+  constructor(private fireStore: AngularFirestore) { }
 
-  findEvents(): Observable<Event[]> {
-    return of(EVENTS);
+  events$(): Observable<Event[]> {
+    return this.fireStore.collection<Event>('events', qfn => qfn.orderBy('name', 'asc'))
+    .valueChanges();
   }
 
   findEvent(id: string): Observable<Event> {
-    return of(EVENTS.find(e => e.id === id));
+    return this.fireStore.collection('events').doc<Event>(id).valueChanges();
   }
 
   // shipmentOrders$(shipmentId: string): Observable<ShipmentOrder[]> {
@@ -68,20 +72,47 @@ export class DataService {
   //     );
   // }
 
-
-
-  findResourcesGroups(eventId: string): Observable<ResourceGroupVO[]> {
+  //
+  findParticipationsGroups(eventId: string): Observable<ParticipationsGrouped[]> {
+    return this.fireStore.collection<ResourceGroup>(`events/${eventId}/resources-groups`)
+      .valueChanges().pipe(
+      mergeMap(grps => {
+        const participationsObservableArray = grps.map(grp => {
+          return this.fireStore.collection<Participation>(`events/${eventId}/resources-groups/${grp.id}/participations`).valueChanges();
+        });
+        return forkJoin([...participationsObservableArray]).pipe(
+          map(participations => {
+            return grps.map((grp, index) => {
+              const part: ParticipationsGrouped = {
+                id: grp.id,
+                name: grp.name,
+                participations: participations[index].map(v => {
+                  return {
+                    id:
+                  }
+                })
+              };
+              return part;
+            });
+          })
+        );
+      })
+    );
+    return o;
+  }
+  findResourcesGroupeds(eventId: string): Observable<ResourcesGroupedVO[]> {
     return of([
       {
         ...GRUPO_BEBIDAS,
-        participations: BEBIDAS.map( r => ({...r}))
+        resources: BEBIDAS
       },
       {
         ...GRUPO_COMIDAS,
-        participations: COMIDAS.map( r => ({...r}))
+        resources: COMIDAS
       }
     ]);
   }
+
 
   findResources(groupId: string): Observable<Resource[]> {
     if (groupId === GRUPO_BEBIDAS.id) {
@@ -113,7 +144,24 @@ export class DataService {
     return this.eventParticipations$;
   }
 
+  addEvent(event: Event): Observable<Event> {
+    event.id = IdUtil.id();
+    EVENTS.push(event);
+    return of(event);
+  }
+
+  addGroup(resourceGroup: ResourceGroup) {
+
+  }
+
+  addResource(resourceGroup: ResourceGroup, resource: Resource) {
+
+  }
+
+
 }
+
+
 
 
 function getRandom(min, max) {

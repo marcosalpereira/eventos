@@ -1,0 +1,73 @@
+<form #formEvent="ngForm" (ngSubmit)="onSubmitEvent()">
+    <mat-form-field style="width:100%">
+        <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="event.name"
+            placeholder="Nome" [disabled]="event.id">
+        <mat-error *ngIf="name.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+    <mat-form-field style="width:100%">
+        <textarea #description="ngModel" name="description" #observacao="ngModel"
+            [(ngModel)]="event.description" matInput placeholder="Descrição" [disabled]="event.id"></textarea>
+        <mat-error *ngIf="description.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+
+    <mat-action-row>
+        <button type="submit" [disabled]="formEvent.invalid" mat-raised-button color="primary"
+            [disabled]="event.id">Enviar</button>
+    </mat-action-row>
+</form>
+
+<form *ngIf="event.id" #formGroup="ngForm" (ngSubmit)="onSubmitGroup()">
+    <mat-form-field>
+        <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="resourceGroup.name"
+            placeholder="Nome">
+        <mat-error *ngIf="name.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+    <mat-action-row>
+        <button type="submit" [disabled]="formGroup.invalid" mat-raised-button color="primary">Enviar</button>
+    </mat-action-row>
+</form>
+
+
+<form *ngIf="event.id" #formResource="ngForm" (ngSubmit)="onSubmitResource()">
+    <mat-form-field>
+        <mat-select [compareWith]='IdUtil.compareFn' name="group" [(ngModel)]="resourceGroup"
+            placeholder="Grupo" required>
+            <mat-option *ngFor="let o of resourcesGroupedVO" [value]="o">{{o.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="resource.name"
+            placeholder="Nome">
+        <mat-error *ngIf="name.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+        <input #meta="ngModel" matInput required type="number" name="meta" [(ngModel)]="resource.meta"
+            placeholder="Meta de Arrecadação">
+        <mat-error *ngIf="meta.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+        <input #unit="ngModel" matInput required type="text" name="unit" [(ngModel)]="resource.unit"
+            placeholder="Unidade">
+        <mat-error *ngIf="unit.hasError('required')">Obrigatório</mat-error>
+    </mat-form-field>
+
+    <mat-action-row>
+        <button type="submit" [disabled]="formResource.invalid" mat-raised-button
+            color="primary">Enviar</button>
+        <button type="reset" mat-raised-button color="warn">Limpar</button>
+    </mat-action-row>
+</form>
+
+<mat-expansion-panel class="resource-group" *ngFor="let group of resourcesGroupedVO" [expanded]="true">
+    <mat-expansion-panel-header>
+        <mat-card-title>{{group.name}}</mat-card-title>
+    </mat-expansion-panel-header>
+    <div class="resources">
+        <mat-card class="inline-card" *ngFor="let resource of group.resources">
+            <mat-card-content>
+                <span>{{resource.name}} Meta: {{resource.meta}} {{resource.unit}}</span>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</mat-expansion-panel>

@@ -1,21 +1,22 @@
 <mat-expansion-panel [hideToggle]="true" [expanded]="true">
   <mat-expansion-panel-header>
     <mat-card-title>Eventos Ativos</mat-card-title>
+
   </mat-expansion-panel-header>
   <div class="events">
-    <mat-card class="events-item" *ngFor="let event of dataService.findEvents() | async">
-      <mat-card-title>
-        <div class="two-items">
+    <button class="events-item" mat-fab color="primary" [routerLink]="['/event-plan']" title="Adicionar">
+      <mat-icon>add</mat-icon>
+    </button>
+    <a [routerLink]="['/event-participation', event.id]" class="events-item"
+      *ngFor="let event of events$ | async">
+      <mat-card>
+        <mat-card-title>
           <span>{{event.name}}</span>
-          <button [routerLink]="['/event-participation', event.id]" mat-icon-button title="Participar"
-            color="primary">
-            <mat-icon>person_add</mat-icon>
-          </button>
-        </div>
-      </mat-card-title>
-      <mat-card-content>
-        {{event.description}}
-      </mat-card-content>
-    </mat-card>
+        </mat-card-title>
+        <mat-card-content>
+          {{event.description}}
+        </mat-card-content>
+      </mat-card>
+    </a>
   </div>
 </mat-expansion-panel>

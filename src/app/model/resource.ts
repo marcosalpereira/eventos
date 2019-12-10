@@ -1,12 +1,12 @@
 import { Participation } from './participation';
 
 export interface ResourceGroup {
-    id: string;
+    id?: string;
     name: string;
 }
 
 export interface Resource {
-    id: string;
+    id?: string;
     name: string;
     meta: number;
     unit: string;
@@ -20,6 +20,10 @@ export interface ParticipationVO extends Resource {
     amount?: number;
 }
 
-export interface ResourceGroupVO extends ResourceGroup {
+export interface ParticipationsGrouped extends ResourceGroup {
     participations: ParticipationVO[];
+}
+
+export interface ResourcesGroupedVO extends ResourceGroup {
+    resources: Resource[];
 }

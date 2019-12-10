@@ -5,9 +5,12 @@
       [opened]="!(isHandset$ | async)">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="#">Planejar</a>
+      <a mat-list-item [routerLink]="['/events']">Listar</a>
     </mat-nav-list>
-  </mat-sidenav>
+    <mat-nav-list>
+        <a mat-list-item [routerLink]="['/event-plan']">Planejar</a>
+      </mat-nav-list>
+    </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       <button

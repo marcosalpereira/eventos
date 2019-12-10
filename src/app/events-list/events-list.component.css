@@ -1,12 +1,12 @@
 .events {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 }
 
 .events-item {
 	margin: 10px;
-	vertical-align: top;
-	width: 260px;
+	max-width: 300px;
 }
 
 .two-items * {

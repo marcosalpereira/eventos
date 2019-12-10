@@ -2,9 +2,7 @@ import { Participation } from 'src/app/model/participation';
 import { Component, OnInit } from '@angular/core';
 import { Event } from '../model/event';
 import {
-  Resource,
-  ResourceGroup,
-  ResourceGroupVO,
+  ParticipationsGrouped,
   Arrecadation
 } from '../model/resource';
 import { DataService } from '../shared/services/data.service';
@@ -20,7 +18,7 @@ export class EventParticipationComponent implements OnInit {
   event: Event;
   participarei = false;
   person: Partial<Person>;
-  resourcesGroups: ResourceGroupVO[];
+  resourcesGroups: ParticipationsGrouped[];
   eventParticipations: Participation[] = [];
   participations: Participation[] = [];
   arrecadations: Arrecadation[] = [];
@@ -42,13 +40,13 @@ export class EventParticipationComponent implements OnInit {
   private receiveEvent(event) {
     this.event = event;
     this.dataService
-      .findResourcesGroups(event.id)
+      .findParticipationsGroups(event.id)
       .subscribe(resourcesGroups =>
-        this.receiveResourcesGroups(event, resourcesGroups)
+        this.receiveResourcesGroups(resourcesGroups)
       );
   }
 
-  private receiveResourcesGroups(event, resourcesGroups: ResourceGroupVO[]): void {
+  private receiveResourcesGroups(resourcesGroups: ParticipationsGrouped[]): void {
     this.resourcesGroups = resourcesGroups;
   }
 
@@ -87,7 +85,7 @@ export class EventParticipationComponent implements OnInit {
   //   }
   // }
 
-  onChangeAmount(group, resource, amount) {
+  onChangeAmount() {
 
   }
 
