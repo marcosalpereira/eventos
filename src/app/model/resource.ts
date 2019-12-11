@@ -17,6 +17,7 @@ export interface Arrecadation {
     total: number;
 }
 export interface ParticipationVO extends Resource {
+    participationId?: string;
     amount?: number;
 }
 

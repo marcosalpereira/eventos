@@ -1,4 +1,5 @@
 export interface Participation {
+    id?: string;
     personId: string;
     resourceId: string;
     amount: number;

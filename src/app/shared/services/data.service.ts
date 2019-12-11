@@ -1,45 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject, forkJoin } from 'rxjs';
+import { Observable, Subject, forkJoin, of  } from 'rxjs';
 import { Event } from 'src/app/model/event';
 import { Resource, ResourceGroup, ParticipationsGrouped, Arrecadation, ResourcesGroupedVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { mergeMap, map } from 'rxjs/operators';
-
-const CERVEJA: Resource = { id: IdUtil.id(), name: 'Cerveja', meta: 10, unit: '600ml' };
-const COCA_COLA: Resource = { id: IdUtil.id(), name: 'Coca-Cola', meta: 4, unit: 'litro' };
-
-const BEBIDAS: Resource[] = [CERVEJA, COCA_COLA];
-
-const ARROZ: Resource = { id: IdUtil.id(), name: 'Arroz', meta: 1, unit: 'Un' };
-const BATATA_PALHA: Resource = { id: IdUtil.id(), name: 'Batata palha', meta: 2, unit: 'Kg' };
-const COMIDAS: Resource[] = [ARROZ, BATATA_PALHA];
-
-const GRUPO_BEBIDAS: ResourceGroup = { id: IdUtil.id(), name: 'Bebidas' };
-const GRUPO_COMIDAS: ResourceGroup = { id: IdUtil.id(), name: 'Comidas' };
-
-const EVENTS: Event[] = [
-  {
-    id: '1',
-    name: 'Natal 2018',
-    description: 'Natal 2018'
-  },
-  {
-    id: '2',
-    name: 'Natal 2019',
-    description: 'Natal 2019'
-  }
-];
+import { mergeMap, map, reduce, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  private tmpParticipations: Participation[] = [];
-  private eventParticipationsSubject = new Subject<Participation[]>();
-  private eventParticipations$ = this.eventParticipationsSubject.asObservable();
+  private resourceGroupedSubject = new Subject<ResourcesGroupedVO[]>();
+  private resourceGrouped$ = this.resourceGroupedSubject.asObservable();
 
   constructor(private fireStore: AngularFirestore) { }
 
@@ -52,139 +26,119 @@ export class DataService {
     return this.fireStore.collection('events').doc<Event>(id).valueChanges();
   }
 
-  // shipmentOrders$(shipmentId: string): Observable<ShipmentOrder[]> {
-  //   return this.fireStore.collection<User>('users', qfn => qfn.orderBy('displayName', 'asc'))
-  //     .valueChanges().pipe(
-  //       mergeMap(users => {
-  //         const orderObservable = users.map(user => {
-  //           return this.fireStore.doc<Order>(`users/${user.uid}/orders/${shipmentId}`).get();
-  //         });
-  //         return forkJoin<DocumentSnapshot<Order>>(...orderObservable).pipe(
-  //           map(ordersDocSnapshot => {
-  //             return users.map((user, index) => {
-  //               return {
-  //                 user, order: ordersDocSnapshot[index].data()
-  //               };
-  //             });
-  //           })
-  //         );
-  //       })
-  //     );
-  // }
-
-  //
   findParticipationsGroups(eventId: string): Observable<ParticipationsGrouped[]> {
-    return this.fireStore.collection<ResourceGroup>(`events/${eventId}/resources-groups`)
-      .valueChanges().pipe(
-      mergeMap(grps => {
-        const participationsObservableArray = grps.map(grp => {
-          return this.fireStore.collection<Participation>(`events/${eventId}/resources-groups/${grp.id}/participations`).valueChanges();
+    return this.participations$(eventId).pipe(
+          map<Participation[], ParticipationsGrouped[]>( participations => {
+            return this.groupParticipations(participations);
+          })
+      );
+  }
+
+  private groupParticipations(participations: Participation[]): ParticipationsGrouped[] {
+    const key = '_resourceName';
+    const tmpMap = participations.reduce((acc, participation) => {
+      acc[participation[key]] = (acc[participation[key]] || []).push(participation);
+      return acc;
+    }, new Map());
+    const ret: ParticipationsGrouped[] = [];
+    for (const [groupName, list] of Object.entries(tmpMap)) {
+      ret.push({ id: list[0].id, name: groupName, participations: list });
+    }
+    return ret;
+  }
+
+  participations$(eventId: string): Observable<Participation[]> {
+    return this.fireStore.collection<Participation>(
+      `events/${eventId}/participations`, qfn => qfn.orderBy('_resourceName', 'asc')
+    ).valueChanges();
+  }
+
+  findResourcesGroupeds(eventId: string): Observable<ResourcesGroupedVO[]> {
+    setTimeout( () => this.emitSelectGroupedResources(eventId), 0);
+    return this.resourceGrouped$;
+  }
+
+  private emitSelectGroupedResources(eventId: string): void {
+    this.selectGroupedResources$(eventId).subscribe(
+      gr => this.resourceGroupedSubject.next(gr)
+    );
+  }
+
+  private selectGroupedResources$(eventId: string): Observable<ResourcesGroupedVO[]> {
+    return this.resourcesGroups$(eventId).pipe(
+      mergeMap(resourcesGroups => {
+        const resourcesArray$ = resourcesGroups.map(resourceGroup => {
+          return this.resources$(eventId, resourceGroup.id).pipe(take(1));
         });
-        return forkJoin([...participationsObservableArray]).pipe(
-          map(participations => {
-            return grps.map((grp, index) => {
-              const part: ParticipationsGrouped = {
-                id: grp.id,
-                name: grp.name,
-                participations: participations[index].map(v => {
-                  return {
-                    id:
-                  }
-                })
+        return forkJoin(resourcesArray$).pipe(
+          map(resourcesArrray => {
+            return resourcesGroups.map( (resourceGroup, index) => {
+              return {
+                id: resourceGroup.id,
+                name: resourceGroup.name,
+                resources: resourcesArrray[index]
               };
-              return part;
             });
           })
         );
       })
     );
-    return o;
-  }
-  findResourcesGroupeds(eventId: string): Observable<ResourcesGroupedVO[]> {
-    return of([
-      {
-        ...GRUPO_BEBIDAS,
-        resources: BEBIDAS
-      },
-      {
-        ...GRUPO_COMIDAS,
-        resources: COMIDAS
-      }
-    ]);
   }
 
-
-  findResources(groupId: string): Observable<Resource[]> {
-    if (groupId === GRUPO_BEBIDAS.id) {
-      return of(BEBIDAS);
-    }
-    return of(COMIDAS);
+  private resources$(eventId: string, resourceGroupId: string): Observable<Resource[]> {
+    const path = `events/${eventId}/resources-groups/${resourceGroupId}/resources`;
+    return this.fireStore.collection<Resource>(path,
+      qfn => qfn.orderBy('name', 'asc'))
+    .valueChanges();
   }
 
-  deleteParticipation(resourceId: string, personId: string) {
-    this.tmpParticipations = this.tmpParticipations.filter(p =>
-      ! (p.resourceId === resourceId && p.personId === personId) );
-    this.eventParticipationsSubject.next(this.tmpParticipations);
+  resourcesGroups$(eventId: string): Observable<ResourceGroup[]> {
+    const path = `events/${eventId}/resources-groups`;
+    return this.fireStore.collection<ResourceGroup>(
+      path, qfn => qfn.orderBy('name', 'asc'))
+    .valueChanges();
+  }
+
+  deleteParticipation(participationId: string) {
+    this.fireStore.collection('participations').doc(participationId).delete();
   }
 
   updateParticipation(participation: Participation) {
-    const founded = this.tmpParticipations.find(p =>
-      (p.resourceId === participation.resourceId && p.personId === participation.personId));
-    founded.amount = participation.amount;
-    this.eventParticipationsSubject.next(this.tmpParticipations);
+    this.fireStore.collection('participations').doc(participation.id).set(
+      participation, {merge: true}
+    );
   }
 
-  selectParticipations(eventId: string): Observable<Participation[]> {
-    setInterval(() => {
-      const r = shuffle([...BEBIDAS, ...COMIDAS])[0];
-      this.tmpParticipations = [... this.tmpParticipations,
-        {amount: getRandom(1, 3), _resourceName: r.name, _personName: 'Fulano', personId: '1', resourceId: r.id}];
-      this.eventParticipationsSubject.next(this.tmpParticipations);
-    }, 2000);
-    return this.eventParticipations$;
+  async addEvent(event: Event): Promise<Event> {
+    const id = IdUtil.id();
+    const copy = {...event, id};
+    await this.fireStore.collection('events').doc(id)
+      .set(copy);
+    return Promise.resolve(copy);
   }
 
-  addEvent(event: Event): Observable<Event> {
-    event.id = IdUtil.id();
-    EVENTS.push(event);
-    return of(event);
+  async addGroup(eventId: string, resourceGroup: ResourceGroup): Promise<ResourceGroup> {
+    const id = IdUtil.id();
+    const copy = {...resourceGroup, id};
+    await this.fireStore
+      .collection('events').doc(eventId)
+      .collection('resources-groups').doc(id)
+      .set(copy);
+    return Promise.resolve(copy);
   }
 
-  addGroup(resourceGroup: ResourceGroup) {
-
+  async addResource(eventId: string, resourceGroupId: string, resource: Resource): Promise<Resource> {
+    const id = IdUtil.id();
+    const copy = {...resource, id};
+    await this.fireStore
+      .collection('events').doc(eventId)
+      .collection('resources-groups').doc(resourceGroupId)
+      .collection('resources').doc(id)
+      .set(copy);
+    this.emitSelectGroupedResources(eventId);
+    return Promise.resolve(copy);
   }
-
-  addResource(resourceGroup: ResourceGroup, resource: Resource) {
-
-  }
-
 
 }
 
 
-
-
-function getRandom(min, max) {
-  return Math.trunc(Math.random() * (max - min) + min);
-}
-
-function shuffle(array) {
-  let currentIndex = array.length;
-  let temporaryValue: number;
-  let randomIndex: number;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}

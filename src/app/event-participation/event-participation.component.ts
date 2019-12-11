@@ -3,7 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { Event } from '../model/event';
 import {
   ParticipationsGrouped,
-  Arrecadation
+  Arrecadation,
+  ResourcesGroupedVO,
+  Resource,
+  ParticipationVO
 } from '../model/resource';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -18,7 +21,7 @@ export class EventParticipationComponent implements OnInit {
   event: Event;
   participarei = false;
   person: Partial<Person>;
-  resourcesGroups: ParticipationsGrouped[];
+  participationsGrouped: ParticipationsGrouped[];
   eventParticipations: Participation[] = [];
   participations: Participation[] = [];
   arrecadations: Arrecadation[] = [];
@@ -31,8 +34,10 @@ export class EventParticipationComponent implements OnInit {
   ngOnInit() {
     this.person = {id: '1'};
     const id = this.route.snapshot.paramMap.get('id');
+
     this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
-    this.dataService.selectParticipations(id).subscribe(
+
+    this.dataService.participations$(id).subscribe(
       participations => this.receiveEventParticipations(participations)
     );
   }
@@ -40,15 +45,40 @@ export class EventParticipationComponent implements OnInit {
   private receiveEvent(event) {
     this.event = event;
     this.dataService
-      .findParticipationsGroups(event.id)
+      .findResourcesGroupeds(event.id)
       .subscribe(resourcesGroups =>
-        this.receiveResourcesGroups(resourcesGroups)
+        this.mergeResourcesAndParticipations(resourcesGroups)
       );
   }
 
-  private receiveResourcesGroups(resourcesGroups: ParticipationsGrouped[]): void {
-    this.resourcesGroups = resourcesGroups;
+  private mergeResourcesAndParticipations(resourcesGroups: ResourcesGroupedVO[]) {
+      this.participationsGrouped = resourcesGroups.map( rg => {
+        const pg = {
+          id: rg.id,
+          name: rg.name,
+          participations: this.toParticipationsVO(rg.resources, this.participations)
+        };
+        return pg;
+      });
   }
+
+  private toParticipationsVO(resources: Resource[], participations: Participation[]): ParticipationVO[] {
+    return resources.map( resource => {
+      const participation = participations.find(p => p.resourceId === resource.id);
+      const participationVO: ParticipationVO = {...resource, amount: 0};
+      if (participation) {
+        participationVO.participationId = participation.id;
+        participationVO.amount =  participation.amount;
+      }
+      return participationVO;
+    });
+  }
+
+  private findParticipation(r: Resource, participations: Participation[]): number {
+    const participation = participations.find(p => p.resourceId === r.id);
+    return participation ? participation.amount : 0;
+  }
+
 
   private receiveEventParticipations(eventParticipations: Participation[]) {
     this.eventParticipations = eventParticipations;

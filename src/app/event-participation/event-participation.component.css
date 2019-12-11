@@ -8,12 +8,6 @@ mat-expansion-panel {
 	flex-wrap: wrap;
 }
 
-.inline-card {
-    padding: 5px;
-    margin-right: 5px;
-    margin-bottom: 10px;
-}
-
 .participation {
     display: block;
 }

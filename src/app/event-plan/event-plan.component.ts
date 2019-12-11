@@ -11,6 +11,7 @@ import * as IdUtil from 'src/app/shared/util/id-util';
 })
 export class EventPlanComponent implements OnInit {
   IdUtil = IdUtil;
+  resourcesGroups: ResourceGroup[] = [];
   resourcesGroupedVO: ResourcesGroupedVO[];
   resource: Resource = {
     name: '', meta: undefined, unit: ''
@@ -27,25 +28,32 @@ export class EventPlanComponent implements OnInit {
   }
 
   onSubmitEvent() {
-    this.dataService.addEvent(this.event).subscribe(
+    this.dataService.addEvent(this.event).then(
       event => this.receiveEvent(event));
 
   }
 
   onSubmitGroup() {
-    this.dataService.addGroup(this.resourceGroup);
+    this.dataService.addGroup(this.event.id, this.resourceGroup).then(
+      group => this.resourceGroup = group
+    );
   }
 
   onSubmitResource() {
-    this.dataService.addResource(this.resourceGroup, this.resource);
+    this.dataService.addResource(this.event.id, this.resourceGroup.id, this.resource);
   }
 
   private receiveEvent(event: Event) {
     this.event = event;
+    this.dataService.resourcesGroups$(event.id).subscribe(
+      grps => this.resourcesGroups = grps
+    );
+
     this.dataService
       .findResourcesGroupeds(event.id)
-      .subscribe(resourcesGroups =>
-        this.resourcesGroupedVO = resourcesGroups
+      .subscribe(resourcesGroups => {
+          this.resourcesGroupedVO = resourcesGroups;
+        }
       );
   }
 }

@@ -15,3 +15,10 @@
 a {
     text-decoration: none;
 }
+
+.inline-card {
+    padding: 5px !important;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    display: inline-block !important;
+}
