@@ -16,4 +16,8 @@ export class EventsListComponent implements OnInit {
     this.events$ = this.dataService.events$();
   }
 
+  onEventDblclick(event) {
+    this.dataService.deleteEvent(event.id);
+  }
+
 }

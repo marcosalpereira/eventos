@@ -6,16 +6,28 @@
     <button class="events-item" mat-fab color="primary" [routerLink]="['/event-plan']" title="Adicionar">
       <mat-icon>add</mat-icon>
     </button>
-    <a [routerLink]="['/event-participation', event.id]" class="events-item"
-      *ngFor="let event of events$ | async">
-      <mat-card>
-        <mat-card-title>
-          <span>{{event.name}}</span>
-        </mat-card-title>
-        <mat-card-content>
-          {{event.description}}
-        </mat-card-content>
-      </mat-card>
-    </a>
+
+
+    <mat-card class="events-item" *ngFor="let event of events$ | async">
+      <mat-card-title>
+        <span>{{event.name}}</span>
+      </mat-card-title>
+      <mat-card-content>
+        {{event.description}}
+      </mat-card-content>
+      <mat-card-actions>
+        <button [routerLink]="['/event-participation', event.id]" mat-icon-button title="Participar"
+          color="primary">
+          <mat-icon>person_add</mat-icon>
+        </button>
+        <button [routerLink]="['/event-plan', event.id]" mat-icon-button title="Editar" color="primary">
+          <mat-icon>create</mat-icon>
+        </button>
+        <button (dblclick)="onEventDblclick(event)" mat-icon-button title="Excluir" color="warn">
+          <mat-icon>delete_sweep</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
   </div>
 </mat-expansion-panel>

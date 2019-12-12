@@ -20,7 +20,7 @@
     <mat-expansion-panel-header><mat-card-title>Todas Participações Agrupadas</mat-card-title></mat-expansion-panel-header>
     <div class="participations">
       <mat-card *ngFor="let arrecadation of arrecadations" class="inline-card">
-        {{arrecadation.name}}: {{arrecadation.total}}
+        {{arrecadation.name}}: {{arrecadation.total}}/{{arrecadation.meta}}
       </mat-card>
     </div>
   </mat-expansion-panel>
@@ -34,7 +34,7 @@
         <mat-card-content>
           <span>{{resource.name}} Meta: {{resource.meta}} {{resource.unit}}</span>
           <mat-form-field class="participation" *ngIf="participarei">
-            <input name="amount" [(ngModel)]="resource.amount" matInput>
+            <input type="number" name="amount" [(ngModel)]="resource.amount" matInput>
             <mat-hint>Quantidade que contribuirei</mat-hint>
           </mat-form-field>
         </mat-card-content>
@@ -43,7 +43,7 @@
   </mat-expansion-panel>
 
   <mat-action-row>
-    <button mat-raised-button color="primary">Gravar</button>
+    <button (click)="onClickGravar()" mat-raised-button color="primary">Gravar</button>
   </mat-action-row>
 
 </mat-expansion-panel>

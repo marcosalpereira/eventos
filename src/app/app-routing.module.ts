@@ -7,6 +7,7 @@ import { EventPlanComponent } from './event-plan/event-plan.component';
 const routes: Routes = [
   { path: '', redirectTo: 'events', pathMatch: 'full' },
   { path: 'event-plan', component: EventPlanComponent},
+  { path: 'event-plan/:id', component: EventPlanComponent},
   { path: 'events', component: EventsListComponent},
   { path: 'event-participation/:id', component: EventParticipationComponent}
 ];

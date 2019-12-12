@@ -32,7 +32,7 @@ export class EventParticipationComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.person = {id: '1'};
+    this.person = {id: '1', name: 'ml'};
     const id = this.route.snapshot.paramMap.get('id');
 
     this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
@@ -74,12 +74,6 @@ export class EventParticipationComponent implements OnInit {
     });
   }
 
-  private findParticipation(r: Resource, participations: Participation[]): number {
-    const participation = participations.find(p => p.resourceId === r.id);
-    return participation ? participation.amount : 0;
-  }
-
-
   private receiveEventParticipations(eventParticipations: Participation[]) {
     this.eventParticipations = eventParticipations;
     this.participations = this.eventParticipations.filter(p => p.personId = this.person.id);
@@ -90,36 +84,50 @@ export class EventParticipationComponent implements OnInit {
   private groupArrecadations(eventParticipations: Participation[]): Arrecadation[] {
     const key = '_resourceName';
     const tmpMap = eventParticipations.reduce( (map, participation) => {
-      map[participation[key]] = (map[participation[key]] || 0) + participation.amount;
+      map[participation[key]] = {
+        total: (map[participation[key]] || 0) + participation.amount,
+        resourceId: participation.resourceId
+      };
       return map;
     }, new Map());
 
     const ret: Arrecadation[] = [];
-    for (const [name, total] of Object.entries(tmpMap)) {
-      ret.push( {name, total} );
+    for (const [name, totalAndResource] of Object.entries(tmpMap)) {
+      ret.push( {name, total: totalAndResource.total, meta: this.findResourceMeta(totalAndResource.resourceId)} );
     }
 
     return ret;
   }
 
-  // onChangeContribuir(resource: Resource, ev) {
-  //   if (ev.checked) {
-  //     this.participations.push({
-  //       resourceId: resource.id,
-  //       personId: this.person.id,
-  //       amount: 0,
-  //       _resourceName: resource.name
-  //     });
-  //   } else {
-  //     this.dataService.deleteParticipation(resource.id, this.person.id);
-  //   }
-  // }
-
-  onChangeAmount() {
+  private findResourceMeta(resourceId: string): number {
+    const meta = this.participationsGrouped.find(pg => pg.participations.find(pvo => pvo.id === resourceId).meta)
 
   }
 
-  // onChangeAmount(participation: Participation) {
-  //   this.dataService.updateParticipation(participation);
-  // }
+  onClickGravar() {
+    this.participationsGrouped.forEach(group => {
+      group.participations.forEach(resource => {
+        if (resource.participationId && (!this.participarei || resource.amount === 0) ) {
+          this.dataService.deleteParticipation(this.event.id, resource.participationId);
+        } else {
+          if (resource.amount !== 0) {
+            const participation = this.toParticipation(resource);
+            this.dataService.saveParticipation(this.event.id, participation);
+          }
+        }
+      });
+    });
+  }
+
+  private toParticipation(resource: ParticipationVO): Participation {
+    return {
+      id: resource.participationId,
+      personId: this.person.id,
+      resourceId: resource.id,
+      amount: resource.amount,
+      _personName: this.person.name,
+      _resourceName: resource.name
+    };
+  }
+
 }

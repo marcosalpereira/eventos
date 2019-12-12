@@ -1,0 +1,22 @@
+/* form {
+    display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+} */
+/*
+div.form-group {
+    border-bottom: 1px solid lightgray;
+}
+
+div.form-group:last-child {
+    border-bottom: none;
+} */
+
+
+mat-form-field {
+    margin-right: 5px;
+}
+
+:host > mat-card {
+    margin-bottom: 5px;
+}

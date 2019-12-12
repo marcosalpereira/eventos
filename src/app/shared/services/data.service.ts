@@ -11,7 +11,6 @@ import { mergeMap, map, reduce, take } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class DataService {
-
   private resourceGroupedSubject = new Subject<ResourcesGroupedVO[]>();
   private resourceGrouped$ = this.resourceGroupedSubject.asObservable();
 
@@ -70,6 +69,8 @@ export class DataService {
         const resourcesArray$ = resourcesGroups.map(resourceGroup => {
           return this.resources$(eventId, resourceGroup.id).pipe(take(1));
         });
+        if (resourcesArray$.length === 0) { return of([]); }
+
         return forkJoin(resourcesArray$).pipe(
           map(resourcesArrray => {
             return resourcesGroups.map( (resourceGroup, index) => {
@@ -99,26 +100,21 @@ export class DataService {
     .valueChanges();
   }
 
-  deleteParticipation(participationId: string) {
-    this.fireStore.collection('participations').doc(participationId).delete();
-  }
-
-  updateParticipation(participation: Participation) {
-    this.fireStore.collection('participations').doc(participation.id).set(
-      participation, {merge: true}
-    );
-  }
-
-  async addEvent(event: Event): Promise<Event> {
-    const id = IdUtil.id();
+  async saveEvent(event: Event): Promise<Event> {
+    const id = event.id || IdUtil.id();
     const copy = {...event, id};
     await this.fireStore.collection('events').doc(id)
       .set(copy);
     return Promise.resolve(copy);
   }
 
-  async addGroup(eventId: string, resourceGroup: ResourceGroup): Promise<ResourceGroup> {
-    const id = IdUtil.id();
+  deleteEvent(eventId: string) {
+    this.fireStore.collection('events').doc(eventId)
+      .delete();
+  }
+
+  async saveGroup(eventId: string, resourceGroup: ResourceGroup): Promise<ResourceGroup> {
+    const id = resourceGroup.id || IdUtil.id();
     const copy = {...resourceGroup, id};
     await this.fireStore
       .collection('events').doc(eventId)
@@ -127,8 +123,15 @@ export class DataService {
     return Promise.resolve(copy);
   }
 
-  async addResource(eventId: string, resourceGroupId: string, resource: Resource): Promise<Resource> {
-    const id = IdUtil.id();
+  deleteGroup(eventId: string, resourceGroupId: string) {
+    this.fireStore
+      .collection('events').doc(eventId)
+      .collection('resources-groups').doc(resourceGroupId)
+      .delete().then ( _ => this.emitSelectGroupedResources(eventId));
+  }
+
+  async saveResource(eventId: string, resourceGroupId: string, resource: Resource): Promise<Resource> {
+    const id = resource.id || IdUtil.id();
     const copy = {...resource, id};
     await this.fireStore
       .collection('events').doc(eventId)
@@ -137,6 +140,31 @@ export class DataService {
       .set(copy);
     this.emitSelectGroupedResources(eventId);
     return Promise.resolve(copy);
+  }
+
+  async deleteResource(eventId: string, resourceGroupId: string, id: string) {
+    await this.fireStore
+      .collection('events').doc(eventId)
+      .collection('resources-groups').doc(resourceGroupId)
+      .collection('resources').doc(id)
+      .delete();
+
+    this.emitSelectGroupedResources(eventId);
+  }
+
+  deleteParticipation(eventId: string, participationId: string) {
+    this.fireStore
+      .collection('events').doc(eventId)
+      .collection('participations').doc(participationId)
+      .delete();
+  }
+
+  saveParticipation(eventId: string, participation: Participation) {
+    const id = participation.id || IdUtil.id();
+    this.fireStore
+      .collection('events').doc(eventId)
+      .collection('participations').doc(id)
+      .set({...participation, id});
   }
 
 }
