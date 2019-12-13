@@ -1,29 +1,28 @@
 <mat-card>
     <mat-card-content>
         <div class="form-group">
-            <h3>Evento</h3>
+            <h4>Evento</h4>
             <form #formEvent="ngForm" (ngSubmit)="onSubmitEvent()">
                 <mat-form-field>
                     <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="event.name"
-                        placeholder="Nome" [disabled]="event.id">
+                        placeholder="Nome">
                     <mat-error *ngIf="name.hasError('required')">Obrigatório</mat-error>
                 </mat-form-field>
-                <mat-form-field>
+                <mat-form-field style="min-width: 40%;">
                     <input #description="ngModel" name="description" #observacao="ngModel"
-                        [(ngModel)]="event.description" matInput placeholder="Descrição"
-                        [disabled]="event.id">
+                        [(ngModel)]="event.description" matInput placeholder="Descrição">
                     <mat-error *ngIf="description.hasError('required')">Obrigatório</mat-error>
                 </mat-form-field>
 
                 <mat-action-row>
-                    <button type="submit" [disabled]="formEvent.invalid || event.id" mat-raised-button
-                        color="primary">Enviar</button>
+                    <button type="submit" [disabled]="formEvent.invalid" mat-raised-button
+                        color="primary">Gravar</button>
                 </mat-action-row>
             </form>
         </div>
         <mat-divider></mat-divider>
         <div class="form-group" *ngIf="event.id">
-            <h3>Grupo</h3>
+            <h4>Grupo</h4>
 
             <form #formGroup="ngForm" (ngSubmit)="onSubmitGroup()">
                 <mat-form-field>
@@ -39,10 +38,10 @@
         </div>
         <mat-divider></mat-divider>
         <div class="form-group" *ngIf="resourcesGroupedVO?.length > 0">
-            <h3>Itens do Grupo</h3>
+            <h4>Itens do Grupo</h4>
             <form #formResource="ngForm" (ngSubmit)="onSubmitResource(formResource)">
                 <mat-form-field>
-                    <mat-select [compareWith]='IdUtil.compareFn' name="group" [(ngModel)]="resourceGroup"
+                    <mat-select [compareWith]='IdUtil.compareFn' name="group" [(ngModel)]="eventResourceGroup"
                         placeholder="Grupo" required>
                         <mat-option *ngFor="let o of resourcesGroupedVO" [value]="o">{{o.name}}</mat-option>
                     </mat-select>
@@ -75,10 +74,11 @@
 
 <mat-card>
     <mat-card-content>
-        <h3>Resumo</h3>
+        <h4>Resumo</h4>
 
         <mat-card class="resource-group" *ngFor="let group of resourcesGroupedVO">
-            <h4 style="display: inline-block">{{group.name}}</h4>
+            <h4 (click)="resourceGroup = group" class="clickable"
+                style="display: inline-block">{{group.name}}</h4>
             <button (dblclick)="onGroupDblclick(group.id)" mat-icon-button title="Excluir Grupo" color="primary">
                 <mat-icon>delete_sweep</mat-icon>
             </button>

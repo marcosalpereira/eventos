@@ -11,13 +11,15 @@ import { EventParticipationComponent } from './event-participation/event-partici
 import { EventPlanComponent } from './event-plan/event-plan.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { EventSolicitationComponent } from './event-solicitation/event-solicitation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EventsListComponent,
     EventParticipationComponent,
-    EventPlanComponent
+    EventPlanComponent,
+    EventSolicitationComponent
   ],
   imports: [
     BrowserModule,

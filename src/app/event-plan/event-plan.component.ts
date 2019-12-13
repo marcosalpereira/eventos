@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 export class EventPlanComponent implements OnInit {
   IdUtil = IdUtil;
   resourcesGroupedVO: ResourcesGroupedVO[];
+
   resource: Resource = {
     name: '', meta: undefined, unit: ''
   };
@@ -21,6 +22,8 @@ export class EventPlanComponent implements OnInit {
   resourceGroup: ResourceGroup = {
     name: ''
   };
+
+  eventResourceGroup: ResourceGroup;
 
   event: Event = {name: '', description: ''};
 
@@ -47,7 +50,7 @@ export class EventPlanComponent implements OnInit {
   }
 
   onSubmitResource(form: NgForm) {
-    this.dataService.saveResource(this.event.id, this.resourceGroup.id, this.resource);
+    this.dataService.saveResource(this.event.id, this.eventResourceGroup.id, this.resource);
     form.resetForm({group: this.resourceGroup});
   }
 

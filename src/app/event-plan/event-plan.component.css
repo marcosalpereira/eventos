@@ -12,6 +12,14 @@ div.form-group:last-child {
     border-bottom: none;
 } */
 
+mat-card.resource-group {
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+h4 {
+    margin: 10px 0 5px 0;
+}
 
 mat-form-field {
     margin-right: 5px;

@@ -7,20 +7,11 @@
     </div>
   </mat-card-title>
 
-  <mat-expansion-panel>
-    <mat-expansion-panel-header><mat-card-title>Todas Participações</mat-card-title></mat-expansion-panel-header>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header><mat-card-title>Participações Agrupadas</mat-card-title></mat-expansion-panel-header>
     <div class="participations">
-      <mat-card *ngFor="let participation of participations" class="inline-card">
-        {{participation._personName}} {{participation._resourceName}}: {{participation.amount}}
-      </mat-card>
-    </div>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header><mat-card-title>Todas Participações Agrupadas</mat-card-title></mat-expansion-panel-header>
-    <div class="participations">
-      <mat-card *ngFor="let arrecadation of arrecadations" class="inline-card">
-        {{arrecadation.name}}: {{arrecadation.total}}/{{arrecadation.meta}}
+      <mat-card [class.meta-reached]="arrecadation.total == arrecadation?.resource?.meta" *ngFor="let arrecadation of arrecadations" class="inline-card">
+        {{arrecadation.resource.name}}: {{arrecadation.total}}/{{arrecadation.resource.meta}}
       </mat-card>
     </div>
   </mat-expansion-panel>
@@ -45,5 +36,14 @@
   <mat-action-row>
     <button (click)="onClickGravar()" mat-raised-button color="primary">Gravar</button>
   </mat-action-row>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header><mat-card-title>Todas Participações</mat-card-title></mat-expansion-panel-header>
+    <div class="participations">
+      <mat-card *ngFor="let participation of participations" class="inline-card">
+        {{participation._personName}} {{participation._resourceName}}: {{participation.amount}}
+      </mat-card>
+    </div>
+  </mat-expansion-panel>
 
 </mat-expansion-panel>

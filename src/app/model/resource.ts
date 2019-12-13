@@ -13,9 +13,8 @@ export interface Resource {
 }
 
 export interface Arrecadation {
-    name: string;
+    resource: Partial<Resource>;
     total: number;
-    meta: number;
 }
 export interface ParticipationVO extends Resource {
     participationId?: string;

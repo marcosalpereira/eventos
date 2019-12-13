@@ -22,3 +22,7 @@ a {
     margin-bottom: 10px;
     display: inline-block !important;
 }
+
+.clickable {
+    cursor: pointer;
+}

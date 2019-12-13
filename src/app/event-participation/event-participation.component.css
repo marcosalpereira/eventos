@@ -11,3 +11,7 @@ mat-expansion-panel {
 .participation {
     display: block;
 }
+
+.meta-reached {
+    background-color: greenyellow;
+}
