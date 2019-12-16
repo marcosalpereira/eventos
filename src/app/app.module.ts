@@ -11,6 +11,7 @@ import { EventParticipationComponent } from './event-participation/event-partici
 import { EventPlanComponent } from './event-plan/event-plan.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { EventSolicitationComponent } from './event-solicitation/event-solicitation.component';
 
 @NgModule({
@@ -28,6 +29,7 @@ import { EventSolicitationComponent } from './event-solicitation/event-solicitat
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   providers: [],
   bootstrap: [AppComponent]
