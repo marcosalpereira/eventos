@@ -6,7 +6,7 @@
 
     <div class="solicitations">
         <mat-card *ngFor="let solicitation of solicitations$ | async" class="inline-card">
-            <span>{{solicitation._personName}}</span>
+            <span>{{solicitation._userName}}</span>
             <button (click)="conceder(solicitation)" mat-raised-button color="primary">Conceder</button>
             <button (click)="apagar(solicitation)" mat-raised-button color="warn">Apagar</button>
         </mat-card>

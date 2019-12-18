@@ -1,26 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DataService } from './shared/services/data.service';
+import { User } from './model/user';
+import { AuthService } from './auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(map(result => result.matches));
 
-  constructor(private breakpointObserver: BreakpointObserver, private dataService: DataService) {}
+  loggedUser: User;
+  authDataSub: Subscription;
 
-  login() {
-    this.dataService.googleAuth();
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  ngOnInit() {
+    this.authDataSub = this.authService.authData$.subscribe(user => {
+      this.loggedUser = user;
+      if (!user) {
+        this.router.navigateByUrl('/login');
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.authDataSub) {
+      this.authDataSub.unsubscribe();
+    }
   }
 
   logout() {
-    this.dataService.loggout();
+    this.authService.loggout();
   }
 }

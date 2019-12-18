@@ -1,78 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, forkJoin, of, Subscription  } from 'rxjs';
+import { Observable, Subject, forkJoin, of  } from 'rxjs';
 import { Event, Solicitation } from 'src/app/model/event';
-import { Resource, ResourceGroup, ParticipationsGrouped, Arrecadation, ResourcesGroupedVO } from 'src/app/model/resource';
+import { Resource, ResourceGroup, ParticipationsGrouped, ResourcesGroupedVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { mergeMap, map, reduce, take } from 'rxjs/operators';
-import { User } from 'src/app/model/user';
-import { auth } from 'firebase/app';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { mergeMap, map, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private authData = new Subject<User>();
-  authData$ = this.authData.asObservable();
-  authStateSub: Subscription;
 
   private resourceGroupedSubject = new Subject<ResourcesGroupedVO[]>();
   private resourceGrouped$ = this.resourceGroupedSubject.asObservable();
 
-  constructor(private fireStore: AngularFirestore, private fireAuth: AngularFireAuth) {
-    this.authStateSub = this.fireAuth.authState.subscribe(userData => {
-      if (userData) {
-        this.getUserData(userData.uid).then(user => {
-          this.authData.next(user);
-        });
-      } else {
-        this.authData.next(null);
-      }
-    });
-  }
-
-  googleAuth(): void {
-    this.authLogin(new auth.GoogleAuthProvider());
-  }
-
-  loggout() {
-    this.fireAuth.auth.signOut();
-    this.authData.next(null);
-  }
-
-  private authLogin(provider: auth.AuthProvider): void {
-    this.fireAuth.auth
-      .signInWithPopup(provider)
-      .then(result => {
-        this.authData.next(result.user);
-        this.setUserData(result.user);
-      })
-      .catch(error => {
-        window.alert(error);
-      });
-  }
-
-  private setUserData(fbuser: firebase.User): void {
-    const ref: AngularFirestoreDocument<any> = this.fireStore.doc(
-      `users/${fbuser.uid}`
-    );
-    const user: User = {
-      uid: fbuser.uid,
-      email: fbuser.email,
-      displayName: fbuser.displayName,
-      photoURL: fbuser.photoURL,
-    };
-    ref.set(user, {merge: true});
-  }
-
-
-  private async getUserData(uid: string): Promise<User> {
-    return this.fireStore.doc(`users/${uid}`)
-      .get().pipe(
-        map(snapshot => snapshot.data() as User)
-      ).toPromise();
+  constructor(private fireStore: AngularFirestore) {
   }
 
   events$(): Observable<Event[]> {
@@ -233,25 +176,6 @@ export class DataService {
       .set({...participation, id});
   }
 
-  grantSolicitation(eventId: string, solicitation: Solicitation) {
-    this.fireStore
-      .collection('users').doc(solicitation.personId)
-      .collection('events').doc(eventId)
-      .set({eventId}, {merge: true})
-      .then( () =>
-        this.removeSolicitation(eventId, solicitation) );
-  }
-
-  removeSolicitation(eventId: string, solicitation: Solicitation) {
-    this.solicitation$(eventId, solicitation.id)
-      .delete();
-  }
-
-  private solicitation$(eventId: string, solicitationId: string): AngularFirestoreDocument<Solicitation> {
-    return this.fireStore
-      .collection('events').doc(eventId)
-      .collection('participations').doc<Solicitation>(solicitationId);
-  }
 }
 
 

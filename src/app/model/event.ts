@@ -5,7 +5,7 @@ export interface Event {
 }
 
 export interface Solicitation {
-    id: string;
-    personId: string;
-    _personName: string;
+    _userId: string;
+    _eventId: string;
+    _userName: string;
 }

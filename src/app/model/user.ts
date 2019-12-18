@@ -4,6 +4,7 @@ export interface User {
   email: string;
   photoURL: string;
   admin?: boolean;
+  eventsId?: string[];
 }
 
 export enum PersonEventStatus {

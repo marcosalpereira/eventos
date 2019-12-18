@@ -6,8 +6,6 @@
     <button class="events-item" mat-fab color="primary" [routerLink]="['/event-plan']" title="Adicionar">
       <mat-icon>add</mat-icon>
     </button>
-
-
     <mat-card class="events-item" *ngFor="let event of events$ | async">
       <mat-card-title>
         <span>{{event.name}}</span>
@@ -16,15 +14,14 @@
         {{event.description}}
       </mat-card-content>
       <mat-card-actions>
-        <button [routerLink]="['/event-participation', event.id]" mat-icon-button title="Participar"
-          color="primary">
+        <button (click)="onClickParticipation(event)" mat-icon-button title="Participar" color="primary">
           <mat-icon>person_add</mat-icon>
         </button>
-        <button [routerLink]="['/event-solicitation', event.id]" mat-icon-button title="Solicitações de Acesso"
-          color="primary">
-          <mat-icon>people</mat-icon>
+        <button *ngIf="authService.user?.admin" [routerLink]="['/event-solicitations', event.id]"
+            mat-icon-button title="Solicitações de Acesso" color="primary">
+          <mat-icon>lock_open</mat-icon>
         </button>
-        <button [routerLink]="['/event-plan', event.id]" mat-icon-button title="Editar" color="primary">
+        <button (click)="onClickEdit(event)" mat-icon-button title="Editar" color="primary">
           <mat-icon>create</mat-icon>
         </button>
         <button (dblclick)="onEventDblclick(event)" mat-icon-button title="Excluir" color="warn">

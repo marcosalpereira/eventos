@@ -3,18 +3,20 @@ import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Event, Solicitation } from '../model/event';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
-  selector: 'app-event-solicitation',
-  templateUrl: './event-solicitation.component.html',
-  styleUrls: ['./event-solicitation.component.css']
+  selector: 'app-event-solicitation-list',
+  templateUrl: './event-solicitation-list.component.html',
+  styleUrls: ['./event-solicitation-list.component.css']
 })
-export class EventSolicitationComponent implements OnInit {
+export class EventSolicitationListComponent implements OnInit {
   solicitations$: Observable<Solicitation[]>;
   event: Event;
 
   constructor(
     private dataService: DataService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {}
 
@@ -25,11 +27,11 @@ export class EventSolicitationComponent implements OnInit {
   }
 
   conceder(solicitation) {
-    this.dataService.grantSolicitation(this.event.id, solicitation);
+    this.authService.grantSolicitation(this.event.id, solicitation);
   }
 
   apagar(solicitation) {
-    this.dataService.removeSolicitation(this.event.id, solicitation);
+    this.authService.removeSolicitation(this.event.id, solicitation);
   }
 
 }

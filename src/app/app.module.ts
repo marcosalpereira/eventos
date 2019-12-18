@@ -12,7 +12,10 @@ import { EventPlanComponent } from './event-plan/event-plan.component';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { EventSolicitationComponent } from './event-solicitation/event-solicitation.component';
+import { EventSolicitationListComponent } from './event-solicitation-list/event-solicitation-list.component';
+import { LoginComponent } from './auth/login/login.component';
+import { EventAccessSolicitationsComponent } from './auth/event-access-solicitations/event-access-solicitations.component';
+import { NoNoNoComponent } from './auth/no-no-no/no-no-no.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { EventSolicitationComponent } from './event-solicitation/event-solicitat
     EventsListComponent,
     EventParticipationComponent,
     EventPlanComponent,
-    EventSolicitationComponent
+    EventSolicitationListComponent,
+    LoginComponent,
+    EventAccessSolicitationsComponent,
+    NoNoNoComponent
   ],
   imports: [
     BrowserModule,
