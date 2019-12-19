@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { User } from 'src/app/model/user';
 import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Solicitation } from 'src/app/model/event';
+import { Event, Solicitation } from 'src/app/model/event';
 @Injectable({
   providedIn: 'root'
 })
@@ -77,13 +77,20 @@ export class AuthService {
       ).toPromise();
   }
 
-  userCanParticipateEvent(eventId: string): boolean {
-    return this.user.eventsId
-      && this.user.eventsId.findIndex(
-        id => id === eventId) !== -1;
+  async userCanAccessEvent(eventId: string): Promise<boolean> {
+    return this.userEvents(this.user.uid, eventId)
+      .get().pipe(
+        map(snapshot => !!snapshot.data())
+      ).toPromise();
   }
 
-  async eventAccessSolicitation(eventId: string) {
+  private userEvents(userId: string, eventId: string): AngularFirestoreDocument<any> {
+    return this.fireStore
+      .collection('users').doc(userId)
+      .collection('events').doc<any>(eventId);
+  }
+
+  async addEventAccessSolicitation(eventId: string) {
     this.solicitation$(eventId, this.user.uid)
       .set({
         _userId: this.user.uid,
@@ -92,15 +99,13 @@ export class AuthService {
       }, {merge: true});
   }
 
-  grantSolicitation(eventId: string, solicitation: Solicitation) {
-    this.user.eventsId = [...this.user.eventsId, eventId];
-    this.setUserData(this.user)
-      .then( () =>
-        this.removeSolicitation(eventId, solicitation) );
+  grantEventAccess(eventId: string, userId: string): Promise<void> {
+    return this.userEvents(userId, eventId)
+      .set({});
   }
 
-  removeSolicitation(eventId: string, solicitation: Solicitation) {
-    this.solicitation$(eventId, solicitation._userId)
+  removeEventAccessSolicitation(eventId: string, userId: string) {
+    this.solicitation$(eventId, userId)
       .delete();
   }
 

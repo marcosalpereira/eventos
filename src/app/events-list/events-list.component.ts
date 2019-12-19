@@ -14,7 +14,6 @@ import { MessageService } from '../shared/util/message.service';
 })
 export class EventsListComponent implements OnInit {
   events$: Observable<Event[]>;
-  // authData$: Observable<User>;
 
   constructor(
     private dataService: DataService,
@@ -24,20 +23,30 @@ export class EventsListComponent implements OnInit {
 
   ngOnInit() {
     this.events$ = this.dataService.events$();
-    // this.authData$ = this.authService.authData$;
   }
 
-  onClickParticipation(event: Event) {
-    if (this.authService.userCanParticipateEvent(event.id)) {
+  async onClickParticipation(event: Event) {
+    const can = await this.authService.userCanAccessEvent(event.id);
+    if (can) {
       this.router.navigate(['/event-participation', event.id]);
     } else {
-      this.authService.eventAccessSolicitation(event.id);
+      this.authService.addEventAccessSolicitation(event.id);
       this.messageService.show('Acesso ao evento solicitado!');
     }
   }
 
+  async onEditSolcitations(event: Event) {
+    const can = await this.authService.userCanAccessEvent(event.id);
+    if (can) {
+      this.router.navigate(['/event-solicitations', event.id]);
+    } else {
+      this.authService.addEventAccessSolicitation(event.id);
+      this.messageService.show('Pedidindo acesso ao evento primeiro!');
+    }
+  }
+
   onClickEdit(event: Event) {
-    if (this.authService.userCanParticipateEvent(event.id)) {
+    if (this.authService.userCanAccessEvent(event.id)) {
       this.router.navigate(['/event-plan', event.id]);
     } else {
       this.router.navigate(['/event-access-solicitation', event.id]);

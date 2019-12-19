@@ -26,12 +26,14 @@ export class EventSolicitationListComponent implements OnInit {
     this.solicitations$ = this.dataService.solicitations$(eventId);
   }
 
-  conceder(solicitation) {
-    this.authService.grantSolicitation(this.event.id, solicitation);
+  conceder(solicitation: Solicitation) {
+    this.authService.grantEventAccess(solicitation._eventId, solicitation._userId)
+      .then( () =>
+        this.authService.removeEventAccessSolicitation(solicitation._eventId, solicitation._userId));
   }
 
-  apagar(solicitation) {
-    this.authService.removeSolicitation(this.event.id, solicitation);
+  apagar(solicitation: Solicitation) {
+    this.authService.removeEventAccessSolicitation(solicitation._eventId, solicitation._userId);
   }
 
 }

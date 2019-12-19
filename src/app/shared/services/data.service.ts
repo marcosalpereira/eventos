@@ -6,6 +6,7 @@ import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { mergeMap, map, take } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,9 @@ export class DataService {
   private resourceGroupedSubject = new Subject<ResourcesGroupedVO[]>();
   private resourceGrouped$ = this.resourceGroupedSubject.asObservable();
 
-  constructor(private fireStore: AngularFirestore) {
+  constructor(
+    private fireStore: AngularFirestore,
+    private authService: AuthService) {
   }
 
   events$(): Observable<Event[]> {
@@ -114,6 +117,9 @@ export class DataService {
     const copy = {...event, id};
     await this.fireStore.collection('events').doc(id)
       .set(copy);
+    if (!event.id) {
+      this.authService.grantEventAccess(id, this.authService.user.uid);
+    }
     return Promise.resolve(copy);
   }
 

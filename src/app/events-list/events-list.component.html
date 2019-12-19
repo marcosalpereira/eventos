@@ -17,14 +17,14 @@
         <button (click)="onClickParticipation(event)" mat-icon-button title="Participar" color="primary">
           <mat-icon>person_add</mat-icon>
         </button>
-        <button *ngIf="authService.user?.admin" [routerLink]="['/event-solicitations', event.id]"
-            mat-icon-button title="Solicitações de Acesso" color="primary">
+        <button (click)="onEditSolcitations(event)"
+            mat-icon-button title="Editar solicitações de acesso" color="primary">
           <mat-icon>lock_open</mat-icon>
         </button>
         <button (click)="onClickEdit(event)" mat-icon-button title="Editar" color="primary">
           <mat-icon>create</mat-icon>
         </button>
-        <button (dblclick)="onEventDblclick(event)" mat-icon-button title="Excluir" color="warn">
+        <button (dblclick)="onEventDblclick(event)" mat-icon-button title="Duplo click para Excluir" color="warn">
           <mat-icon>delete_sweep</mat-icon>
         </button>
       </mat-card-actions>
