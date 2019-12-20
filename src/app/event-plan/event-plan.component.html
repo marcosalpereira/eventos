@@ -1,7 +1,13 @@
+<mat-card-title>Planejamento do Evento</mat-card-title>
+
+<div *ngIf="event?.id" class="event-solicitations">
+    <app-event-solicitation-list [event]="event"></app-event-solicitation-list>
+</div>
+
 <mat-card>
     <mat-card-content>
         <div class="form-group">
-            <h4>Evento</h4>
+            <h4>Dados gerais</h4>
             <form #formEvent="ngForm" (ngSubmit)="onSubmitEvent()">
                 <mat-form-field>
                     <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="event.name"
@@ -22,7 +28,7 @@
         </div>
         <mat-divider></mat-divider>
         <div class="form-group" *ngIf="event.id">
-            <h4>Grupo</h4>
+            <h4>Grupos</h4>
 
             <form #formGroup="ngForm" (ngSubmit)="onSubmitGroup()">
                 <mat-form-field>

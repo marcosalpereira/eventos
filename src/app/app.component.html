@@ -24,8 +24,8 @@
         <div [title]="loggedUser?.email">{{loggedUser?.displayName}}</div>
       </div>
     </mat-toolbar>
-    <mat-card>
+    <mat-expansion-panel [hideToggle]="true" [expanded]="true">
       <router-outlet></router-outlet>
-    </mat-card>
+    </mat-expansion-panel>
   </mat-sidenav-content>
 </mat-sidenav-container>

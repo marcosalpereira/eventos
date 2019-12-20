@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -11,8 +11,9 @@ import { AuthService } from '../auth/services/auth.service';
   styleUrls: ['./event-solicitation-list.component.css']
 })
 export class EventSolicitationListComponent implements OnInit {
+  @Input() event: Event;
+
   solicitations$: Observable<Solicitation[]>;
-  event: Event;
 
   constructor(
     private dataService: DataService,
@@ -21,8 +22,13 @@ export class EventSolicitationListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const eventId = this.route.snapshot.paramMap.get('id');
-    this.dataService.findEvent(eventId).subscribe(event => this.event = event);
+    let eventId: string;
+    if (this.event) {
+      eventId = this.event.id;
+    } else {
+      eventId = this.route.snapshot.paramMap.get('id');
+      this.dataService.findEvent(eventId).subscribe(event => this.event = event);
+    }
     this.solicitations$ = this.dataService.solicitations$(eventId);
   }
 

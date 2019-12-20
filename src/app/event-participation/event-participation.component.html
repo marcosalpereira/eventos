@@ -1,4 +1,8 @@
-<mat-expansion-panel *ngIf="event" [hideToggle]="true" [expanded]="true">
+<ng-container *ngIf="event">
+
+  <div *ngIf="event?.id" class="event-solicitations">
+    <app-event-solicitation-list [event]="event"></app-event-solicitation-list>
+  </div>
 
   <mat-card-title style="margin-top: 5px;">
     <div class="two-items">
@@ -46,4 +50,4 @@
     </div>
   </mat-expansion-panel>
 
-</mat-expansion-panel>
+</ng-container>

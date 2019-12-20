@@ -9,11 +9,15 @@ export class CanAccessEventGuard implements CanActivate {
 
   constructor(
     private authService: AuthService,
-    private router: Router) {}
+    private router: Router) { }
 
   async canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot) {
+    if (!this.authService.user) {
+      this.router.navigate(['/']);
+      return false;
+    }
     const eventId = next.paramMap.get('id');
     const granted = await this.authService.userCanAccessEvent(eventId);
     if (!granted) {

@@ -14,7 +14,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { EventSolicitationListComponent } from './event-solicitation-list/event-solicitation-list.component';
 import { LoginComponent } from './auth/login/login.component';
-import { EventAccessSolicitationsComponent } from './auth/event-access-solicitations/event-access-solicitations.component';
 import { NoNoNoComponent } from './auth/no-no-no/no-no-no.component';
 
 @NgModule({
@@ -25,7 +24,6 @@ import { NoNoNoComponent } from './auth/no-no-no/no-no-no.component';
     EventPlanComponent,
     EventSolicitationListComponent,
     LoginComponent,
-    EventAccessSolicitationsComponent,
     NoNoNoComponent
   ],
   imports: [

@@ -1,11 +1,10 @@
-<mat-expansion-panel *ngIf="event" [hideToggle]="true" [expanded]="true">
-
-    <mat-card-title style="margin-top: 5px;">
-        <span>Pedidos de acesso ao evento {{event.name}}</span>
-    </mat-card-title>
+<mat-card-title *ngIf="event" style="margin-top: 5px;">
+    <span>Pedidos de acesso ao evento {{event.name}}</span>
+</mat-card-title>
+<ng-container *ngIf="(solicitations$ | async) as solicitations"; else no-solicitations-yet>
 
     <div class="solicitations">
-        <mat-card *ngFor="let solicitation of solicitations$ | async" class="inline-card">
+        <mat-card *ngFor="let solicitation of solicitations" class="inline-card">
             <span>{{solicitation._userName}}</span>
             <mat-action-row>
                 <button (click)="conceder(solicitation)" mat-raised-button color="primary">Conceder</button>
@@ -14,4 +13,8 @@
         </mat-card>
     </div>
 
-</mat-expansion-panel>
+</ng-container>
+
+<ng-template #no_solicitations_yet>
+    Nenhuma solicitação por enquanto
+</ng-template>
