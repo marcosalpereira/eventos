@@ -1,0 +1,15 @@
+.container {
+    position: relative;
+}
+
+.container > mat-expansion-panel {
+    position: absolute;
+    right: 0;
+    top: 26px;
+    opacity: 80%;
+}
+
+.container .solicitations {
+    display: flex;
+    flex-direction: column;
+}

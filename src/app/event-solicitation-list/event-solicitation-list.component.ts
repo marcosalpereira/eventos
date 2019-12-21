@@ -12,6 +12,7 @@ import { AuthService } from '../auth/services/auth.service';
 })
 export class EventSolicitationListComponent implements OnInit {
   @Input() event: Event;
+  builtIn = false;
 
   solicitations$: Observable<Solicitation[]>;
 
@@ -25,6 +26,7 @@ export class EventSolicitationListComponent implements OnInit {
     let eventId: string;
     if (this.event) {
       eventId = this.event.id;
+      this.builtIn = true;
     } else {
       eventId = this.route.snapshot.paramMap.get('id');
       this.dataService.findEvent(eventId).subscribe(event => this.event = event);

@@ -11,7 +11,7 @@
     </div>
   </mat-card-title>
 
-  <mat-expansion-panel [expanded]="true">
+  <mat-expansion-panel [hideToggle]="true" [expanded]="true">
     <mat-expansion-panel-header><mat-card-title>Participações Agrupadas</mat-card-title></mat-expansion-panel-header>
     <div class="participations">
       <mat-card [class.meta-reached]="arrecadation.total == arrecadation?.resource?.meta" *ngFor="let arrecadation of arrecadations" class="inline-card">
