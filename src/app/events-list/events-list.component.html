@@ -27,6 +27,9 @@
         <button (dblclick)="onEventDblclick(event)" mat-icon-button title="Duplo click para Excluir" color="warn">
           <mat-icon>delete_sweep</mat-icon>
         </button>
+        <button [routerLink]="['survey', event.id]" mat-icon-button title="Enquetes" color="primary">
+          <mat-icon>question</mat-icon>
+        </button>
       </mat-card-actions>
     </mat-card>
 

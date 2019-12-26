@@ -1,6 +1,7 @@
+import { Question, Answer } from './../../model/event';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, forkJoin, of  } from 'rxjs';
-import { Event, Solicitation } from 'src/app/model/event';
+import { Event, Solicitation, Survey } from 'src/app/model/event';
 import { Resource, ResourceGroup, ParticipationsGrouped, ResourcesGroupedVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
@@ -24,6 +25,28 @@ export class DataService {
   events$(): Observable<Event[]> {
     return this.fireStore.collection<Event>('events', qfn => qfn.orderBy('name', 'asc'))
     .valueChanges();
+  }
+
+  surveys$(eventId: string): Observable<Survey[]> {
+    return this.fireStore
+      .collection('events').doc(eventId)
+      .collection<Survey>('survey')
+      .valueChanges();
+  }
+
+  surveyQuestions$(eventId: string, surveyId: string): Observable<Question[]> {
+    return this.fireStore
+      .collection('events').doc(eventId)
+      .collection('survey').doc(surveyId)
+      .collection<Question>('questions')
+      .valueChanges();
+  }
+  surveyAnswers$(eventId: string, surveyId: string): Observable<Answer[]> {
+    return this.fireStore
+      .collection('events').doc(eventId)
+      .collection('survey').doc(surveyId)
+      .collection<Answer>('answers')
+      .valueChanges();
   }
 
   findEvent(id: string): Observable<Event> {

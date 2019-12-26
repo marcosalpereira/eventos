@@ -8,6 +8,7 @@ import { LoggedGuard } from './auth/services/logged.guard';
 import { NoNoNoComponent } from './auth/no-no-no/no-no-no.component';
 import { LoginComponent } from './auth/login/login.component';
 import { CanAccessEventGuard } from './auth/services/can-access-event.guard';
+import { SurveyListComponent } from './survey/survey-list/survey-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'events-list', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'event-plan/:id', component: EventPlanComponent, canActivate: [CanAccessEventGuard]},
   { path: 'event-participation/:id', component: EventParticipationComponent, canActivate: [LoggedGuard]},
   { path: 'event-solicitations/:id', component: EventSolicitationListComponent, canActivate: [CanAccessEventGuard]},
+  { path: 'survey-list/:id', component: SurveyListComponent, canActivate: [CanAccessEventGuard]},
   { path: 'no-permission', component: NoNoNoComponent},
   { path: 'login', component: LoginComponent},
   { path: '**', redirectTo: ''}

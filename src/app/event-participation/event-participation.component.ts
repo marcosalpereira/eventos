@@ -1,3 +1,4 @@
+import { AuthService } from './../auth/services/auth.service';
 import { Participation } from 'src/app/model/participation';
 import { Component, OnInit } from '@angular/core';
 import { Event } from '../model/event';
@@ -20,7 +21,6 @@ import { User } from '../model/user';
 export class EventParticipationComponent implements OnInit {
   event: Event;
   participarei = false;
-  user: Partial<User>;
   participationsGrouped: ParticipationsGrouped[];
   eventParticipations: Participation[] = [];
   participations: Participation[] = [];
@@ -28,11 +28,15 @@ export class EventParticipationComponent implements OnInit {
 
   constructor(
     private dataService: DataService,
+    private authService: AuthService,
     private route: ActivatedRoute
   ) {}
 
+  private get user() {
+    return this.authService.user;
+  }
+
   ngOnInit() {
-    this.user = { uid: '1', displayName: 'ml' };
     const id = this.route.snapshot.paramMap.get('id');
 
     this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
