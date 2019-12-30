@@ -18,7 +18,7 @@ export class CanAccessEventGuard implements CanActivate {
       this.router.navigate(['/']);
       return false;
     }
-    const eventId = next.paramMap.get('id');
+    const eventId = next.paramMap.get('eventId');
     const granted = await this.authService.userCanAccessEvent(eventId);
     if (!granted) {
       this.router.navigate(['/no-permission']);

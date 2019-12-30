@@ -49,6 +49,13 @@ export class DataService {
       .valueChanges();
   }
 
+  deleteSurvey(eventId: string, surveyId: string) {
+    this.fireStore
+      .collection('events').doc(eventId)
+      .collection('surveys').doc(surveyId)
+      .delete();
+  }
+
   findEvent(id: string): Observable<Event> {
     return this.fireStore.collection('events').doc<Event>(id).valueChanges();
   }

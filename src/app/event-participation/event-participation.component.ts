@@ -30,22 +30,28 @@ export class EventParticipationComponent implements OnInit {
     private dataService: DataService,
     private authService: AuthService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   private get user() {
     return this.authService.user;
   }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+    this.route.params.subscribe(params => {
+      this.receiveRoute(params.eventId);
+    });
 
-    this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
+  }
+
+  receiveRoute(eventId: string) {
+    this.dataService.findEvent(eventId).subscribe(
+      event => this.receiveEvent(event));
 
     this.dataService
-      .participations$(id)
-      .subscribe(participations =>
-        this.receiveEventParticipations(participations)
+      .participations$(eventId).subscribe(
+        participations => this.receiveEventParticipations(participations)
       );
+
   }
 
   private receiveEvent(event) {

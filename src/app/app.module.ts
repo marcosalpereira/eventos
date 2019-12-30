@@ -15,7 +15,6 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { EventSolicitationListComponent } from './event-solicitation-list/event-solicitation-list.component';
 import { LoginComponent } from './auth/login/login.component';
 import { NoNoNoComponent } from './auth/no-no-no/no-no-no.component';
-import { SurleyListComponent } from './survey/surley-list/surley-list.component';
 import { SurveyListComponent } from './survey/survey-list/survey-list.component';
 import { SurveyEditComponent } from './survey/survey-edit/survey-edit.component';
 import { SurveyAnswerComponent } from './survey/survey-answer/survey-answer.component';
@@ -30,7 +29,6 @@ import { SecretFriendSortComponent } from './secret-friend/secret-friend-sort/se
     EventSolicitationListComponent,
     LoginComponent,
     NoNoNoComponent,
-    SurleyListComponent,
     SurveyListComponent,
     SurveyEditComponent,
     SurveyAnswerComponent,

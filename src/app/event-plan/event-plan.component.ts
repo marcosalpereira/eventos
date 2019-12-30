@@ -33,8 +33,10 @@ export class EventPlanComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.dataService.findEvent(id).subscribe(event => this.receiveEvent(event));
+    this.route.params.subscribe(params => {
+      this.dataService.findEvent(params.eventId).subscribe(
+        event => this.receiveEvent(event));
+    });
   }
 
   onSubmitEvent() {

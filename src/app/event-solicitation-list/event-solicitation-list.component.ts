@@ -23,15 +23,20 @@ export class EventSolicitationListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let eventId: string;
     if (this.event) {
-      eventId = this.event.id;
+      const eventId = this.event.id;
+      this.solicitations$ = this.dataService.solicitations$(eventId);
       this.builtIn = true;
     } else {
-      eventId = this.route.snapshot.paramMap.get('id');
-      this.dataService.findEvent(eventId).subscribe(event => this.event = event);
+      this.route.params.subscribe(params => {
+        this.dataService.findEvent(params.eventId).subscribe(
+          event => {
+            this.event = event;
+            this.solicitations$ = this.dataService.solicitations$(event.id);
+          }
+        );
+      });
     }
-    this.solicitations$ = this.dataService.solicitations$(eventId);
   }
 
   conceder(solicitation: Solicitation) {
