@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/shared/services/data.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Survey } from 'src/app/model/event';
+import { Survey } from 'src/app/model/survey';
 import { Observable } from 'rxjs';
 import { Event } from 'src/app/model/event';
 

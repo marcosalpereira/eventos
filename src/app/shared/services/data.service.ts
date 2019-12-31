@@ -1,7 +1,7 @@
-import { Question, Answer } from './../../model/event';
+import { Question, Answer, Survey } from './../../model/survey';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, forkJoin, of  } from 'rxjs';
-import { Event, Solicitation, Survey } from 'src/app/model/event';
+import { Event, Solicitation  } from 'src/app/model/event';
 import { Resource, ResourceGroup, ParticipationsGrouped, ResourcesGroupedVO } from 'src/app/model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { Participation } from 'src/app/model/participation';
