@@ -1,17 +1,17 @@
-import { AuthService } from './../auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { Participation } from 'src/app/model/participation';
 import { Component, OnInit } from '@angular/core';
-import { Event } from '../model/event';
+import { Event } from '../../model/event';
 import {
   ParticipationsGrouped,
   Arrecadation,
   ResourcesGroupedVO,
   Resource,
   ParticipationVO
-} from '../model/resource';
-import { DataService } from '../shared/services/data.service';
+} from '../../model/resource';
+import { DataService } from '../../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../model/user';
+import { User } from '../../model/user';
 
 @Component({
   selector: 'app-event-participation',

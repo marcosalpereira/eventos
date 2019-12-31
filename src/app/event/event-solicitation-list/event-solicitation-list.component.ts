@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataService } from '../shared/services/data.service';
+import { DataService } from '../../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Event, Solicitation } from '../model/event';
-import { AuthService } from '../auth/services/auth.service';
+import { Event, Solicitation } from '../../model/event';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-event-solicitation-list',

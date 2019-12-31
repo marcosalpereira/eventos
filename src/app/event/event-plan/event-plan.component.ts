@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Event } from 'src/app/model/event';
-import { DataService } from '../shared/services/data.service';
-import { ResourcesGroupedVO, Resource, ResourceGroup } from '../model/resource';
+import { DataService } from '../../shared/services/data.service';
+import { ResourcesGroupedVO, Resource, ResourceGroup } from '../../model/resource';
 import * as IdUtil from 'src/app/shared/util/id-util';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MessageService } from '../../shared/util/message.service';
 
 @Component({
   selector: 'app-event-plan',
@@ -29,7 +30,8 @@ export class EventPlanComponent implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private message: MessageService
   ) {}
 
   ngOnInit() {
@@ -41,18 +43,22 @@ export class EventPlanComponent implements OnInit {
 
   onSubmitEvent() {
     this.dataService.saveEvent(this.event).then(
-      event => this.receiveEvent(event));
+      event => {
+        this.receiveEvent(event);
+        this.message.show('Gravado com sucesso!');
+      });
 
   }
 
   onSubmitGroup() {
     this.dataService.saveGroup(this.event.id, this.resourceGroup).then(
-      group => this.resourceGroup = group
+      group => {this.resourceGroup = group; this.message.show('Gravado com sucesso!'); }
     );
   }
 
   onSubmitResource(form: NgForm) {
-    this.dataService.saveResource(this.event.id, this.eventResourceGroup.id, this.resource);
+    this.dataService.saveResource(this.event.id, this.eventResourceGroup.id, this.resource)
+      .then( () => this.message.show('Gravado com sucesso!'));
     form.resetForm({group: this.resourceGroup});
   }
 

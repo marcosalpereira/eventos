@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Event } from '../model/event';
-import { DataService } from '../shared/services/data.service';
+import { Event } from '../../model/event';
+import { DataService } from '../../shared/services/data.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/services/auth.service';
-import { User } from '../model/user';
-import { MessageService } from '../shared/util/message.service';
+import { AuthService } from '../../auth/services/auth.service';
+import { User } from '../../model/user';
+import { MessageService } from '../../shared/util/message.service';
 
 @Component({
   selector: 'app-events-list',
