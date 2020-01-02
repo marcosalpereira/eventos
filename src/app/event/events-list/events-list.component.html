@@ -2,11 +2,11 @@
   <mat-expansion-panel-header>
     <mat-card-title>Eventos Ativos</mat-card-title>
   </mat-expansion-panel-header>
-  <div class="events">
-    <button class="events-item" mat-fab color="primary" [routerLink]="['/event-plan']" title="Adicionar">
+  <div class="inline-card-container">
+    <button mat-fab color="primary" [routerLink]="['/event-plan']" title="Adicionar">
       <mat-icon>add</mat-icon>
     </button>
-    <mat-card class="events-item" *ngFor="let event of events$ | async">
+    <mat-card class="inline-card event" *ngFor="let event of events$ | async">
       <mat-card-title>
         <span>{{event.name}}</span>
       </mat-card-title>

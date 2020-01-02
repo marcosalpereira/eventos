@@ -1,11 +1,4 @@
-.events {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-}
-
-.events-item {
-	margin: 10px;
+.event {
 	max-width: 300px;
 }
 

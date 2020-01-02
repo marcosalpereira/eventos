@@ -34,11 +34,11 @@ export class SurveyListComponent implements OnInit {
   }
 
   onClickAnswer(survey: Survey) {
-    this.router.navigate(['/survey-answer', survey.id]);
+    this.router.navigate(['/survey-answer', this.event.id, survey.id]);
   }
 
   onClickEdit(survey: Survey) {
-    this.router.navigate(['/survey-edit', survey.id]);
+    this.router.navigate(['/survey-edit', this.event.id, survey.id]);
   }
 
   onSurveyDblclick(survey: Survey) {

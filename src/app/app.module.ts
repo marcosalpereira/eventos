@@ -19,6 +19,8 @@ import { SurveyListComponent } from './survey/survey-list/survey-list.component'
 import { SurveyEditComponent } from './survey/survey-edit/survey-edit.component';
 import { SurveyAnswerComponent } from './survey/survey-answer/survey-answer.component';
 import { SecretFriendSortComponent } from './secret-friend/secret-friend-sort/secret-friend-sort.component';
+import { BackComponent } from './shared/back/back.component';
+import { GoBackDirective } from './shared/go-back.directive';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { SecretFriendSortComponent } from './secret-friend/secret-friend-sort/se
     SurveyListComponent,
     SurveyEditComponent,
     SurveyAnswerComponent,
-    SecretFriendSortComponent
+    SecretFriendSortComponent,
+    BackComponent,
+    GoBackDirective
   ],
   imports: [
     BrowserModule,

@@ -5,7 +5,6 @@
     color: orangered;
 }
 
-
 .two-items {
     display: flex;
     width: 100%;
@@ -18,12 +17,21 @@ a {
 }
 
 .inline-card {
-    padding: 5px !important;
-    margin-right: 5px;
-    margin-bottom: 10px;
+    padding: 10px !important;
+    margin: 7px !important;
     display: inline-block !important;
+}
+
+.inline-card-container {
+    display: flex;
+	flex-wrap: wrap;
+	align-items: center;
 }
 
 .clickable {
     cursor: pointer;
+}
+
+.full-width {
+    width: 100%;
 }

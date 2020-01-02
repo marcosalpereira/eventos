@@ -9,23 +9,25 @@
 <ng-container *ngIf="!builtIn">
     <mat-card-title *ngIf="!builtIn && event" style="margin-top: 5px;">
         <span>Pedidos de acesso ao evento {{event.name}}</span>
+        <button mat-mini-fab color="primary" appGoBack>
+            <mat-icon>keyboard_backspace</mat-icon>
+        </button>
     </mat-card-title>
     <ng-container *ngTemplateOutlet="content"></ng-container>
 </ng-container>
 
 <ng-template #content>
     <ng-container *ngIf="(solicitations$ | async) as solicitations" ; else no-solicitations-yet>
-
         <div class="solicitations">
             <mat-card *ngFor="let solicitation of solicitations" class="inline-card">
                 <span>{{solicitation._userName}}</span>
                 <mat-action-row>
-                    <button (click)="conceder(solicitation)" mat-raised-button color="primary">Conceder</button>
+                    <button (click)="conceder(solicitation)" mat-raised-button
+                        color="primary">Conceder</button>
                     <button (click)="apagar(solicitation)" mat-raised-button color="warn">Apagar</button>
                 </mat-action-row>
             </mat-card>
         </div>
-
     </ng-container>
 
     <ng-template #no_solicitations_yet>

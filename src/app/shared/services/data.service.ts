@@ -1,4 +1,4 @@
-import { Question, Answer, Survey } from './../../model/survey';
+import { Answers, Survey } from './../../model/survey';
 import { Injectable } from '@angular/core';
 import { Observable, Subject, forkJoin, of  } from 'rxjs';
 import { Event, Solicitation  } from 'src/app/model/event';
@@ -30,23 +30,42 @@ export class DataService {
   surveys$(eventId: string): Observable<Survey[]> {
     return this.fireStore
       .collection('events').doc(eventId)
-      .collection<Survey>('survey')
+      .collection<Survey>('surveys')
       .valueChanges();
   }
 
-  surveyQuestions$(eventId: string, surveyId: string): Observable<Question[]> {
+  survey$(eventId: string, surveyId: string): Observable<Survey> {
     return this.fireStore
       .collection('events').doc(eventId)
-      .collection('survey').doc(surveyId)
-      .collection<Question>('questions')
+      .collection('surveys').doc<Survey>(surveyId)
       .valueChanges();
   }
-  surveyAnswers$(eventId: string, surveyId: string): Observable<Answer[]> {
+
+  surveyAnswers$(eventId: string, surveyId: string): Observable<Answers> {
+    const uid = this.authService.user.uid;
     return this.fireStore
       .collection('events').doc(eventId)
-      .collection('survey').doc(surveyId)
-      .collection<Answer>('answers')
+      .collection('surveys').doc(surveyId)
+      .collection('answers').doc<Answers>(uid)
       .valueChanges();
+  }
+
+  surveyAnswersSave$(eventId: string, surveyId: string, answers: string): Promise<void> {
+    const uid = this.authService.user.uid;
+    return this.fireStore
+      .collection('events').doc(eventId)
+      .collection('surveys').doc(surveyId)
+      .collection('answers').doc<Answers>(uid)
+      .set({uid, answers});
+  }
+
+  async surveySave(eventId: string, survey: Survey) {
+    const id = survey.id || IdUtil.id();
+    const copy = {...survey, id};
+    return this.fireStore
+      .collection('events').doc(eventId)
+      .collection('surveys').doc(id)
+      .set(copy);
   }
 
   deleteSurvey(eventId: string, surveyId: string) {

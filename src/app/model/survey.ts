@@ -2,17 +2,11 @@ export interface Survey {
     id?: string;
     name: string;
     maxAnswers: number;
+    questions: string;
 }
 
-export interface Question {
-    id: string;
-    number: number;
-    description: string;
-}
-
-export interface Answer {
+export interface Answers {
     uid: string;
-    questionId: string;
-    answer: string;
+    answers: string;
 }
 
