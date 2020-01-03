@@ -1,0 +1,15 @@
+<mat-expansion-panel *ngIf="survey" [hideToggle]="true" [expanded]="true">
+    <mat-toolbar>
+        <mat-toolbar-row class="two-items">
+            <button mat-mini-fab color="secondary" appGoBack>
+                <mat-icon>keyboard_backspace</mat-icon>
+            </button>
+            <span>Resultados da enquete {{survey.name}}</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-card class="answer" *ngFor="let answer of results">
+        <span matBadge="{{answer.votes}}" matBadgeOverlap="false">{{answer.question}}</span>
+    </mat-card>
+
+</mat-expansion-panel>

@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../environments/environment';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,8 +20,8 @@ import { SurveyListComponent } from './survey/survey-list/survey-list.component'
 import { SurveyEditComponent } from './survey/survey-edit/survey-edit.component';
 import { SurveyAnswerComponent } from './survey/survey-answer/survey-answer.component';
 import { SecretFriendSortComponent } from './secret-friend/secret-friend-sort/secret-friend-sort.component';
-import { BackComponent } from './shared/back/back.component';
 import { GoBackDirective } from './shared/go-back.directive';
+import { SurveyResultsComponent } from './survey/survey-results/survey-results.component';
 
 @NgModule({
   declarations: [
@@ -35,8 +36,8 @@ import { GoBackDirective } from './shared/go-back.directive';
     SurveyEditComponent,
     SurveyAnswerComponent,
     SecretFriendSortComponent,
-    BackComponent,
-    GoBackDirective
+    GoBackDirective,
+    SurveyResultsComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +48,9 @@ import { GoBackDirective } from './shared/go-back.directive';
     AngularFirestoreModule,
     AngularFireAuthModule
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'pt' },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

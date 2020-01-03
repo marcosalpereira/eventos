@@ -35,3 +35,7 @@ a {
 .full-width {
     width: 100%;
 }
+
+mat-toolbar button + button {
+    margin-left: 5px !important;
+}

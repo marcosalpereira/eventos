@@ -11,6 +11,7 @@ import { CanAccessEventGuard } from './auth/services/can-access-event.guard';
 import { SurveyListComponent } from './survey/survey-list/survey-list.component';
 import { SurveyEditComponent } from './survey/survey-edit/survey-edit.component';
 import { SurveyAnswerComponent } from './survey/survey-answer/survey-answer.component';
+import { SurveyResultsComponent } from './survey/survey-results/survey-results.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'events-list', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'survey-edit/:eventId', component: SurveyEditComponent, canActivate: [CanAccessEventGuard]},
   { path: 'survey-edit/:eventId/:surveyId', component: SurveyEditComponent, canActivate: [CanAccessEventGuard]},
   { path: 'survey-answer/:eventId/:surveyId', component: SurveyAnswerComponent, canActivate: [CanAccessEventGuard]},
+  { path: 'survey-results/:eventId/:surveyId', component: SurveyResultsComponent, canActivate: [CanAccessEventGuard]},
 
   { path: 'no-permission', component: NoNoNoComponent},
 

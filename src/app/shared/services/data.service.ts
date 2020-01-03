@@ -8,6 +8,8 @@ import { Participation } from 'src/app/model/participation';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { mergeMap, map, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import * as firebase from 'firebase/app';
+import Timestamp = firebase.firestore.Timestamp;
 
 @Injectable({
   providedIn: 'root'
@@ -18,41 +20,52 @@ export class DataService {
   private resourceGrouped$ = this.resourceGroupedSubject.asObservable();
 
   constructor(
-    private fireStore: AngularFirestore,
+    private angFireStore: AngularFirestore,
     private authService: AuthService) {
   }
 
   events$(): Observable<Event[]> {
-    return this.fireStore.collection<Event>('events', qfn => qfn.orderBy('name', 'asc'))
+    return this.angFireStore.collection<Event>('events', qfn => qfn.orderBy('name', 'asc'))
     .valueChanges();
   }
 
   surveys$(eventId: string): Observable<Survey[]> {
-    return this.fireStore
+    return this.angFireStore
       .collection('events').doc(eventId)
       .collection<Survey>('surveys')
-      .valueChanges();
+      .valueChanges().pipe(map(surveys => {
+        surveys.forEach(survey => convertSurveyTimestampToDate(survey));
+        return surveys;
+      }));
   }
 
   survey$(eventId: string, surveyId: string): Observable<Survey> {
-    return this.fireStore
+    return this.angFireStore
       .collection('events').doc(eventId)
       .collection('surveys').doc<Survey>(surveyId)
-      .valueChanges();
+      .valueChanges().pipe(map(survey => convertSurveyTimestampToDate(survey)));
   }
 
-  surveyAnswers$(eventId: string, surveyId: string): Observable<Answers> {
+  surveyLoggedUserAnswers$(eventId: string, surveyId: string): Observable<Answers> {
     const uid = this.authService.user.uid;
-    return this.fireStore
+    return this.angFireStore
       .collection('events').doc(eventId)
       .collection('surveys').doc(surveyId)
       .collection('answers').doc<Answers>(uid)
       .valueChanges();
   }
 
+  surveyAnswers$(eventId: string, surveyId: string): Observable<Answers[]> {
+    return this.angFireStore
+      .collection('events').doc(eventId)
+      .collection('surveys').doc(surveyId)
+      .collection<Answers>('answers')
+      .valueChanges();
+  }
+
   surveyAnswersSave$(eventId: string, surveyId: string, answers: string): Promise<void> {
     const uid = this.authService.user.uid;
-    return this.fireStore
+    return this.angFireStore
       .collection('events').doc(eventId)
       .collection('surveys').doc(surveyId)
       .collection('answers').doc<Answers>(uid)
@@ -62,21 +75,22 @@ export class DataService {
   async surveySave(eventId: string, survey: Survey) {
     const id = survey.id || IdUtil.id();
     const copy = {...survey, id};
-    return this.fireStore
+    copy.expiration = Timestamp.fromDate(survey.expiration as Date);
+    return this.angFireStore
       .collection('events').doc(eventId)
       .collection('surveys').doc(id)
       .set(copy);
   }
 
   deleteSurvey(eventId: string, surveyId: string) {
-    this.fireStore
+    this.angFireStore
       .collection('events').doc(eventId)
       .collection('surveys').doc(surveyId)
       .delete();
   }
 
   findEvent(id: string): Observable<Event> {
-    return this.fireStore.collection('events').doc<Event>(id).valueChanges();
+    return this.angFireStore.collection('events').doc<Event>(id).valueChanges();
   }
 
   findParticipationsGroups(eventId: string): Observable<ParticipationsGrouped[]> {
@@ -101,7 +115,7 @@ export class DataService {
   }
 
   participations$(eventId: string): Observable<Participation[]> {
-    return this.fireStore.collection<Participation>(
+    return this.angFireStore.collection<Participation>(
       `events/${eventId}/participations`, qfn => qfn.orderBy('_resourceName', 'asc')
     ).valueChanges();
   }
@@ -142,21 +156,21 @@ export class DataService {
 
   private resources$(eventId: string, resourceGroupId: string): Observable<Resource[]> {
     const path = `events/${eventId}/resources-groups/${resourceGroupId}/resources`;
-    return this.fireStore.collection<Resource>(path,
+    return this.angFireStore.collection<Resource>(path,
       qfn => qfn.orderBy('name', 'asc'))
     .valueChanges();
   }
 
   solicitations$(eventId: string): Observable<Solicitation[]> {
     const path = `events/${eventId}/solicitations`;
-    return this.fireStore.collection<Solicitation>(path,
+    return this.angFireStore.collection<Solicitation>(path,
       qfn => qfn.orderBy('_userName', 'asc'))
       .valueChanges();
   }
 
   resourcesGroups$(eventId: string): Observable<ResourceGroup[]> {
     const path = `events/${eventId}/resources-groups`;
-    return this.fireStore.collection<ResourceGroup>(
+    return this.angFireStore.collection<ResourceGroup>(
       path, qfn => qfn.orderBy('name', 'asc'))
     .valueChanges();
   }
@@ -164,7 +178,7 @@ export class DataService {
   async saveEvent(event: Event): Promise<Event> {
     const id = event.id || IdUtil.id();
     const copy = {...event, id};
-    await this.fireStore.collection('events').doc(id)
+    await this.angFireStore.collection('events').doc(id)
       .set(copy);
     if (!event.id) {
       this.authService.grantEventAccess(id, this.authService.user.uid);
@@ -173,14 +187,14 @@ export class DataService {
   }
 
   deleteEvent(eventId: string) {
-    this.fireStore.collection('events').doc(eventId)
+    this.angFireStore.collection('events').doc(eventId)
       .delete();
   }
 
   async saveGroup(eventId: string, resourceGroup: ResourceGroup): Promise<ResourceGroup> {
     const id = resourceGroup.id || IdUtil.id();
     const copy = {...resourceGroup, id};
-    await this.fireStore
+    await this.angFireStore
       .collection('events').doc(eventId)
       .collection('resources-groups').doc(id)
       .set(copy);
@@ -188,7 +202,7 @@ export class DataService {
   }
 
   deleteGroup(eventId: string, resourceGroupId: string) {
-    this.fireStore
+    this.angFireStore
       .collection('events').doc(eventId)
       .collection('resources-groups').doc(resourceGroupId)
       .delete().then ( _ => this.emitSelectGroupedResources(eventId));
@@ -197,7 +211,7 @@ export class DataService {
   async saveResource(eventId: string, resourceGroupId: string, resource: Resource): Promise<Resource> {
     const id = resource.id || IdUtil.id();
     const copy = {...resource, id};
-    await this.fireStore
+    await this.angFireStore
       .collection('events').doc(eventId)
       .collection('resources-groups').doc(resourceGroupId)
       .collection('resources').doc(id)
@@ -207,7 +221,7 @@ export class DataService {
   }
 
   async deleteResource(eventId: string, resourceGroupId: string, id: string) {
-    await this.fireStore
+    await this.angFireStore
       .collection('events').doc(eventId)
       .collection('resources-groups').doc(resourceGroupId)
       .collection('resources').doc(id)
@@ -217,7 +231,7 @@ export class DataService {
   }
 
   deleteParticipation(eventId: string, participationId: string) {
-    this.fireStore
+    this.angFireStore
       .collection('events').doc(eventId)
       .collection('participations').doc(participationId)
       .delete();
@@ -225,7 +239,7 @@ export class DataService {
 
   saveParticipation(eventId: string, participation: Participation) {
     const id = participation.id || IdUtil.id();
-    this.fireStore
+    this.angFireStore
       .collection('events').doc(eventId)
       .collection('participations').doc(id)
       .set({...participation, id});
@@ -233,4 +247,8 @@ export class DataService {
 
 }
 
+function convertSurveyTimestampToDate(survey: Survey): Survey {
+  survey.expiration = (survey.expiration as Timestamp).toDate();
+  return survey;
+}
 

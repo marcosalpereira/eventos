@@ -37,6 +37,10 @@ export class SurveyListComponent implements OnInit {
     this.router.navigate(['/survey-answer', this.event.id, survey.id]);
   }
 
+  onClickResults(survey: Survey) {
+    this.router.navigate(['/survey-results', this.event.id, survey.id]);
+  }
+
   onClickEdit(survey: Survey) {
     this.router.navigate(['/survey-edit', this.event.id, survey.id]);
   }

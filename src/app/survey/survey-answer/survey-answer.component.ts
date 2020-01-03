@@ -51,7 +51,7 @@ export class SurveyAnswerComponent implements OnInit, OnDestroy {
         .survey$(this.eventId, params.surveyId)
         .pipe(take(1)).toPromise();
 
-    const answerDb = await this.dataService.surveyAnswers$(this.eventId, this.survey.id)
+    const answerDb = await this.dataService.surveyLoggedUserAnswers$(this.eventId, this.survey.id)
       .pipe(take(1)).toPromise();
 
     this.answers = this.survey.questions.split('\n').map( (q, i) => {

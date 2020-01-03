@@ -1,13 +1,28 @@
-<mat-expansion-panel [hideToggle]="true" [expanded]="true">
+<mat-expansion-panel *ngIf="survey" [hideToggle]="true" [expanded]="true">
     <mat-expansion-panel-header>
         <mat-card-title>Enquete</mat-card-title>
     </mat-expansion-panel-header>
 
     <form #form="ngForm" (ngSubmit)="onSubmit()">
         <mat-form-field>
-            <input #name="ngModel" matInput required type="text" name="name" [(ngModel)]="survey.name"
+            <input #nameRef="ngModel" matInput required type="text" name="name" [(ngModel)]="survey.name"
                 placeholder="Nome">
-            <mat-error *ngIf="name.hasError('required')">Obrigatório</mat-error>
+            <mat-error *ngIf="nameRef.hasError('required')">Obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input #expirationDateRef="ngModel" name="expirationDate" [(ngModel)]="expirationDate" matInput
+                [matDatepicker]="expirationDatePicker" placeholder="Data limite para responder"
+                [min]="minExpirationDate" required>
+            <mat-datepicker-toggle matSuffix [for]="expirationDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #expirationDatePicker></mat-datepicker>
+            <mat-error *ngIf="expirationDateRef.hasError('matDatepickerParse')">Data Inválida</mat-error>
+        <mat-error *ngIf="expirationDateRef.hasError('matDatepickerMin')">Data deve ser maior ou igual a {{minExpirationDate | date : 'dd/MM/yyyy'}}</mat-error>
+            <mat-error *ngIf="expirationDateRef.hasError('required')">Obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input #expirationTimeRef="ngModel" name="expirationTime" [(ngModel)]="expirationTime"
+                matInput type="time" placeholder="Hora limite" required>
+            <mat-error *ngIf="expirationTimeRef.hasError('required')">Obrigatório</mat-error>
         </mat-form-field>
         <mat-form-field>
             <input #maxAnswers="ngModel" matInput required type="number" name="maxAnswers"
@@ -16,8 +31,7 @@
         </mat-form-field>
         <mat-form-field class="questions">
             <textarea wrap="hard" rows="5" #questionsRef="ngModel" matInput required name="questions"
-                [(ngModel)]="survey.questions"
-                placeholder="Perguntas"></textarea>
+                [(ngModel)]="survey.questions" placeholder="Perguntas"></textarea>
             <mat-hint>Uma pergunta por linha</mat-hint>
             <mat-error *ngIf="questionsRef.hasError('required')">Obrigatório</mat-error>
         </mat-form-field>
